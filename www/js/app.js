@@ -258,8 +258,8 @@ function bindEvents() {
 
 // Initialize Kinvey
 Kinvey.initialize({
-  appKey: '<appKey>',
-  appSecret: '<appSecret>'
+  appKey: 'kid_ryiIKffKZ',
+  appSecret: 'cdf8c00f516e4941a691eab1275ed2a6'
 })
   .then(function(activeUser) {
     if (!activeUser && authorizedHrefs.indexOf(location.pathname) !== -1) {
