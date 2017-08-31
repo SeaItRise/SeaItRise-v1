@@ -86,10 +86,10 @@ var app = {
         // Create the rows
         var rows = books.map(function(book) {
           return '<tr>\n'
-            + '<td>' + book.title + '</td>\n'
-            + '<td>' + book.author + '</td>\n'
-            + '<td>' + (book.isbn || '') + '</td>\n'
-            + '<td>' + book.review + '</td>\n'
+            + '<td><a href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=' + book.id +'">' + book.id + '</td>\n'
+            + '<td>' + book.name + '</td>\n'
+            + '<td>' + book.lat + '</td>\n'
+            + '<td>' + book.lng + '</td>\n'
             + '</tr>';
         });
 
@@ -97,10 +97,10 @@ var app = {
         var html = '<table class="table table-striped">\n'
           +   '<thead>\n'
           +     '<tr>\n'
-          +       '<th>Title</th>\n'
-          +       '<th>Author</th>\n'
-          +       '<th>ISBN</th>\n'
-          +       '<th>Review</th>\n'
+          +       '<th>Station Name</th>\n'
+          +       '<th>ID</th>\n'
+          +       '<th>Latitude</th>\n'
+          +       '<th>Longitude</th>\n'
           +     '</tr>\n'
           +   '</thead>\n'
           +   '<tbody>\n'
@@ -118,6 +118,51 @@ var app = {
         .subscribe(function(books) {
           return renderTable(books, '#books-table')
         });
+    },
+
+    loadTideStations: function (dataStoreType) {
+        // Render the table
+        function renderTable(stations, selector) {
+            // Default stations to an empty array
+            stations = stations || [];
+
+            // Create the rows
+            var rows = stations.map(function (station) {
+                return '<tr>\n'
+                  + '<td>' + station.name + '</td>\n'
+                  + '<td>' + station.id + '</td>\n'
+                  + '<td>' + station.lat + '</td>\n'
+                  + '<td>' + station.lng + '</td>\n'
+                  + '<td>' + (station.reference_id || '') + '</td>\n'
+                  + '</tr>';
+            });
+
+            // Create the table
+            var html = '<table class="table table-striped">\n'
+              + '<thead>\n'
+              + '<tr>\n'
+              + '<th>Station Name</th>\n'
+              + '<th>ID</th>\n'
+              + '<th>Latitude</th>\n'
+              + '<th>Longitude</th>\n'
+              + '<th>Reference ID</th>\n'
+              + '</tr>\n'
+              + '</thead>\n'
+              + '<tbody>\n'
+              + rows.join('')
+              + '</tbody>\n'
+              + '</table>\n';
+
+            // Add the html to the page
+            $(selector).html(html);
+        }
+
+        // Load the stations
+        var store = Kinvey.DataStore.collection('NOAAStations', dataStoreType);
+        store.find()
+          .subscribe(function (stations) {
+              return renderTable(stations, '#NOAAStations-table')
+          });
     },
 
     loadFiles: function() {
