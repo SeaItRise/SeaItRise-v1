@@ -113,8 +113,13 @@ var app = {
       }
 
       // Load the books
+      var query = new Kinvey.Query();
+      query.ascending('lat');
+      query.ascending('lng');
+      
+
       var store = Kinvey.DataStore.collection('books', dataStoreType);
-      store.find()
+      store.find(query)
         .subscribe(function(books) {
           return renderTable(books, '#books-table')
         });

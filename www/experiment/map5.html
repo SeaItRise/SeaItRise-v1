@@ -18,6 +18,51 @@
     </style>
   </head>
   <body>
+   <!-- <style>
+    #sir-layer-menu {
+        background: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 10px;
+        right: 10px;
+        border-radius: 3px;
+        width: 120px;
+        border: 1px solid rgba(0,0,0,0.4);
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    #sir-layer-menu sir-a {
+        font-size: 13px;
+        color: #404040;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,0.25);
+        text-align: center;
+    }
+
+    #sir-layer-menu sir-a:last-child {
+        border: none;
+    }
+
+    #sir-layer-menu sir-a:hover {
+        background-color: #f8f8f8;
+        color: #404040;
+    }
+
+    #sir-layer-menu sir-a.active {
+        background-color: #3887be;
+        color: #ffffff;
+    }
+
+    #sir-layer-menu sir-a.active:hover {
+        background: #3074a4;
+    }
+    </style>
+      -->
+
     <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
@@ -41,10 +86,7 @@
             <li class="dropdown">
               <a id="books-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Map<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="/map.html">Street Map</a></li>
-                <li><a href="/map-0ft.html">Map w/ NOAA 0ft overlay</a></li>
-                <li><a href="/map-3ft.html">Map w/ NOAA 3ft overlay</a></li>
-                <li><a href="/map-6ft.html">Map w/ NOAA 6ft overlay</a></li>
+                <li><a href="/index.html">Map</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -76,7 +118,7 @@
       </div>
     </nav>
 
-<!--simple map display from Mapbox-->
+<!--simple map display from leaflet, using Mapbox and NOAA overlays-->
 
     <div id='map'></div>
 
@@ -93,17 +135,92 @@
         center: [-122.3383, 47.6027], // starting position [lng, lat]
         zoom: 9 // starting zoom
       });
-      // Add zoom and rotation controls to the map.
+
+      map.on('load', function () {
+          map.addSource('noaa-0ft', {
+              'type': 'raster',
+              'tiles': [
+                  'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_0ft/MapServer/tile/{z}/{y}/{x}'
+              ],
+              'tileSize': 256
+          });
+          map.addLayer({
+              'id': 'noaa-0ft',
+              'type': 'raster',
+              'source': 'noaa-0ft'
+          });
+
+          map.addSource('noaa-3ft', {
+              'type': 'raster',
+              'tiles': [
+                  'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}'
+              ],
+              'tileSize': 256
+          });
+          map.addLayer({
+              'id': 'noaa-3ft',
+              'type': 'raster',
+              'source': 'noaa-3ft'
+
+          });
+
+          map.addSource('noaa-6ft', {
+              'type': 'raster',
+              'tiles': [
+                  'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_6ft/MapServer/tile/{z}/{y}/{x}'
+              ],
+              'tileSize': 256
+          });
+          map.addLayer({
+              'id': 'noaa-6ft',
+              'type': 'raster',
+              'source': 'noaa-6ft'
+          });
+
+      });
+
+      var toggleableLayerIds = ['noaa-0ft', 'noaa-3ft', 'noaa-6ft'];
+
+      for (var i = 0; i < toggleableLayerIds.length; i++) {
+          var id = toggleableLayerIds[i];
+
+          var link = document.createElement('sir-a');
+          link.href = '#';
+          link.className = 'active';
+          link.textContent = id;
+
+          link.onclick = function (e) {
+              var clickedLayer = this.textContent;
+              e.preventDefault();
+              e.stopPropagation();
+
+              var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+              if (visibility === 'visible') {
+                  map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                  map.setPaintProperty(clickedLayer, 'raster-opacity', 0.5)
+                  this.className = '';
+              } else {
+                  this.className = 'active';
+                  map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+              }
+          };
+          var layers = document.getElementById('sir-layer-menu');
+          layers.appendChild(link);
+      }
+
+    </script>
+
+      <!--      // Add zoom and rotation controls to the map.
       map.addControl(new mapboxgl.NavigationControl());
       // Add geolocate control to the map.
       map.addControl(new mapboxgl.GeolocateControl({
-        positionOptions: {
-        enableHighAccuracy: true
-        },
-        trackUserLocation: true
-      }));
+          positionOptions: {
+              enableHighAccuracy: true
+          },
+          trackUserLocation: true
+      })); -->
 
-
-    </script>
+      <!--  -->
   </body>
 </html>

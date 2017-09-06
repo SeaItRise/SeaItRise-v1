@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/todc-bootstrap.min.css">
     <link rel="stylesheet" href="css/app.css">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
   </head>
   <body>
     <!--[if lte IE 9]>
@@ -69,36 +76,9 @@
       </div>
     </nav>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-          <div class="panel panel-default">
-            <div id="profile-success" class="panel-success" style="display: none;"></div>
-            <div id="profile-error" class="panel-error" style="display: none;"></div>
-            <div class="panel-heading">
-              <h3 class="panel-title">Profile</h3>
-            </div>
-            <div class="panel-body">
-              <form id="profile-form">
-                <div class="form-group">
-                  <label for="username">Username</label>
-                  <input type="text" class="form-control" id="username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                  <label for="firstname">First Name</label>
-                  <input type="text" class="form-control" id="firstname" placeholder="First Name">
-                </div>
-                <div class="form-group">
-                  <label for="lastname">Last Name</label>
-                  <input type="text" class="form-control" id="lastname" placeholder="Last Name">
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--simple map display from leaflet, using Mapbox and NOAA overlays-->
+
+    <div id='map'></div>
 
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -106,18 +86,47 @@
     <script src="js/kinvey-html5-sdk.min.js"></script>
     <script src="js/app.js"></script>
     <script>
-      $(document).on('app.ready', function() {
-        // Get the active user
-        var activeUser = Kinvey.User.getActiveUser();
-
-        if (activeUser) {
-          // Update the form values
-          $('#username').val(activeUser.data.username);
-          $('#password').val(activeUser.data.password);
-          $('#firstname').val(activeUser.data.firstname || '');
-          $('#lastname').val(activeUser.data.lastname || '');
-        }
+      mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/cpsarason/cj70tri0o045h2rpl7g4e5aws', // stylesheet location
+        center: [-122.3383, 47.6027], // starting position [lng, lat]
+        zoom: 9 // starting zoom
       });
+
+      map.on('load', function () {
+          map.addSource('noaa-3ft', {
+              'type': 'raster',
+              'tiles': [
+                  'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer/tile/{z}/{y}/{x}'
+              ],
+              'tileSize': 256
+          });
+          map.addLayer({
+              'id': 'noaa-3ft',
+              'type': 'raster',
+              'source': 'noaa-3ft'
+
+          });
+
+          map.setPaintProperty('noaa-3ft', 'raster-opacity', 0.5)
+
+      });
+
+      map.addControl(new mapboxgl.NavigationControl());
+      // Add geolocate control to the map.
+      map.addControl(new mapboxgl.GeolocateControl({
+          positionOptions: {
+              enableHighAccuracy: true
+          },
+          trackUserLocation: true
+      }));
+
     </script>
+
+      <!--      // Add zoom and rotation controls to the map.
+       -->
+
+      <!--  -->
   </body>
 </html>
