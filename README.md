@@ -1,5 +1,6 @@
-# HTML5-Starter
-A Kinvey starter application that uses the Kinvey HTML5 3.x SDK.
+# Sea It Rise HTML5 Web App
+A lightweight HTML5 site that adapts the Kinvey starter application and uses the Kinvey HTML5 3.x SDK as 
+well as MapBox (for maps) and NOAA Coastal Planning data (coast.noaa.gov) layers.
 
 ## Setup
 
@@ -21,6 +22,9 @@ A Kinvey starter application that uses the Kinvey HTML5 3.x SDK.
 2. Execute `npm start`.
 
 ## License
+
+All changes and updates the responsibility of the Sea It Rise project, use at your own risk! These 
+files are under the Apache License because of the original code used from Kinvey, Inc. (see below).
 
 Copyright (c) 2017 Kinvey Inc.
 
