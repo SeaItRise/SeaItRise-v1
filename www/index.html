@@ -14,7 +14,7 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #map { position:absolute; top:45px; bottom:0; width:100%; }
     </style>
   </head>
   <body>
@@ -32,7 +32,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Sea It Rise</a>
+          <a class="navbar-brand" href="/index.html">Sea It Rise</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,32 +78,27 @@
 
 <!--simple map display from Mapbox-->
 
-    <div id='map'></div>
-
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/rsvp.min.js"></script>
     <script src="js/kinvey-html5-sdk.min.js"></script>
     <script src="js/app.js"></script>
-    <script>
-      mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
-      var map = new mapboxgl.Map({
-        container: 'map', // container id
-        style: 'mapbox://styles/cpsarason/cj70tri0o045h2rpl7g4e5aws', // stylesheet location
-        center: [-122.3383, 47.6027], // starting position [lng, lat]
-        zoom: 9 // starting zoom
-      });
-      // Add zoom and rotation controls to the map.
-      map.addControl(new mapboxgl.NavigationControl());
-      // Add geolocate control to the map.
-      map.addControl(new mapboxgl.GeolocateControl({
-        positionOptions: {
-        enableHighAccuracy: true
-        },
-        trackUserLocation: true
-      }));
-
-
-    </script>
+     
+    <div class="container login-container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <div class="panel panel-default">
+            <center>
+                <h1>Sea It Rise</h1>
+                <h2>A Coastal Resiliency Planning App</h2>
+            </center>
+            </div>
+            </div>
+          </div>
+        </div>
+      <center>
+          <a href="/map-3ft.html"><button type="button" class="btn btn-primary btn-lg">Explore The Maps</button></a>
+          <a href="/login.html"><button type="button" class="btn btn-primary btn-lg">Login To Upload Images</button><//a>
+      </center>      
   </body>
 </html>

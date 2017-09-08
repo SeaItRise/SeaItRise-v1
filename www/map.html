@@ -14,11 +14,10 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #map { position:absolute; top:45px; bottom:0; width:100%; }
     </style>
   </head>
   <body>
-
     <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
@@ -33,7 +32,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Sea It Rise</a>
+          <a class="navbar-brand" href="/index.html">Sea It Rise</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -86,6 +85,16 @@
     <script src="js/rsvp.min.js"></script>
     <script src="js/kinvey-html5-sdk.min.js"></script>
     <script src="js/app.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css' />
+    <style>
+    #geocoder-container > div {
+     min-width:50%;
+     margin-left:25%;
+     position: sticky;
+     top: 65px;
+    }
+</style>
     <script>
       mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
       var map = new mapboxgl.Map({
@@ -95,20 +104,51 @@
         zoom: 9 // starting zoom
       });
 
-      map.addControl(new mapboxgl.NavigationControl());
-      // Add geolocate control to the map.
-      map.addControl(new mapboxgl.GeolocateControl({
-          positionOptions: {
-              enableHighAccuracy: true
-          },
-          trackUserLocation: true
-      }));
 
-    </script>
+      var geocoder = new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken
+      });
 
-      <!--      // Add zoom and rotation controls to the map.
-       -->
+      map.addControl(geocoder);
 
-      <!--  -->
+      // After the map style has loaded on the page, add a source layer and default
+      // styling for a single point.
+      map.on('load', function() {
+          map.addSource('single-point', {
+              "type": "geojson",
+              "data": {
+                  "type": "FeatureCollection",
+                  "features": []
+              }
+          });
+
+          map.addLayer({
+              "id": "point",
+              "source": "single-point",
+              "type": "circle",
+              "paint": {
+                  "circle-radius": 10,
+                  "circle-color": "#007cbf"
+              }
+          });
+
+
+          // Listen for the `geocoder.input` event that is triggered when a user
+          // makes a selection and add a symbol that matches the result.
+          geocoder.on('result', function(ev) {
+              map.getSource('single-point').setData(ev.result.geometry);
+          });
+
+          map.addControl(new mapboxgl.NavigationControl());
+          // Add geolocate control to the map.
+          map.addControl(new mapboxgl.GeolocateControl({
+              positionOptions: {
+                  enableHighAccuracy: true
+              },
+              trackUserLocation: true
+          }));
+      });
+      </script>
+
   </body>
 </html>

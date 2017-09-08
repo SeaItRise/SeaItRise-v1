@@ -287,10 +287,12 @@ var app = {
 
 // Authorized Hrefs
 var authorizedHrefs = [
-  '/',
-  '/index.html',
+//  '/',
+//  '/index.html',
+  '/files.html',
   '/upload.html',
-  '/profile.html'
+  '/profile.html',
+  '/tides.html'
 ];
 
 // Bind events
