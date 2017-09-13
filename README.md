@@ -1,6 +1,6 @@
 # Sea It Rise HTML5 Web App
-A lightweight HTML5 site that adapts the Kinvey starter application and uses the Kinvey HTML5 3.x SDK as 
-well as MapBox (for maps) and NOAA Coastal Planning data (coast.noaa.gov) layers.
+A lightweight HTML5 site that adapts the Kinvey starter application and uses the Kinvey (www.kinvey.com) HTML5 3.x SDK as 
+well as MapBox (www.mapbox.com) (for maps). Inundation data from NOAA Office for Coastal management data (coast.noaa.gov) layers. Water level and tide station data courtesy of the NOAA CO-OPS API (https://tidesandcurrents.noaa.gov/api/).
 
 ## Setup
 
