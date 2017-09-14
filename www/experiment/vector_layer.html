@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+</head>
+<body>
+<style>
+     
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+ 
+ .map-overlay  {
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+    border-radius: 3px;
+    position: absolute;
+    width: 25%;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    display: none;
+}
+    #menu {
+        background: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 10px;
+        right: 10px;
+        border-radius: 3px;
+        width: 120px;
+        border: 1px solid rgba(0,0,0,0.4);
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    #menu a {
+        font-size: 13px;
+        color: #404040;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,0.25);
+        text-align: center;
+    }
+
+    #menu a:last-child {
+        border: none;
+    }
+
+    #menu a:hover {
+        background-color: #f8f8f8;
+        color: #404040;
+    }
+
+    #menu a.active {
+        background-color: #3887be;
+        color: #ffffff;
+    }
+
+    #menu a.active:hover {
+        background: #3074a4;
+    }
+</style>
+<nav id="menu"></nav>
+<div id="map" ></div>
+<div id='map-overlay' class='map-overlay'></div>
+ 
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    zoom: 10,
+    center: [-95.447303, 29.753574]
+});
+var overlay = document.getElementById('map-overlay');
+ 
+map.on('load', function () {
+//////////////////////////////////////////////
+    map.addSource('NOAA_Reference-Stations', {
+        type: 'vector',
+        url: 'mapbox://cpsarason.cj70tccqu01xd2wmnmnusciwu-9aimg'
+    });
+//////////////////////////////////////////////// 
+map.addLayer({
+  'id': 'NOAA_Reference-Stations',
+  'type': 'symbol',
+  'source': 'NOAA_Reference-Stations',
+  'layout': {
+     'visibility': 'visible',
+     'icon-image': 'star-15'
+       },
+       'source-layer': 'NOAA_Reference-Stations'
+  });
+////////////////////////////////////////////////    
+});
+ 
+</script>
+
+</body>
+</html>
