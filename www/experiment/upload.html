@@ -6,22 +6,14 @@
     <title>Sea It Rise, Coastal Resiliency Planner</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/todc-bootstrap.min.css">
-    <link rel="stylesheet" href="css/app.css">
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:45px; bottom:0; width:100%; }
-    </style>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/todc-bootstrap.min.css">
+    <link rel="stylesheet" href="../css/app.css">
   </head>
   <body>
     <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
-
     <nav class="navbar navbar-masthead navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -45,7 +37,6 @@
                 <li><a href="/map-0ft.html">Map w/ NOAA 0ft overlay</a></li>
                 <li><a href="/map-3ft.html">Map w/ NOAA 3ft overlay</a></li>
                 <li><a href="/map-6ft.html">Map w/ NOAA 6ft overlay</a></li>
-                <li><a href="/experiment/mapbox-dashboard.html">Desktop Prototype</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -60,7 +51,6 @@
               <ul class="dropdown-menu">
                 <li><a href="/files.html">View Uploads</a></li>
                 <li><a href="/upload.html">Upload an Image</a></li>
-                <li><a href="/"<i>AR View (coming soon)</i></a></li>
               </ul>
             </li>
           </ul>
@@ -78,95 +68,69 @@
       </div>
     </nav>
 
-<!--simple map display from leaflet, using Mapbox and NOAA overlays-->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <div class="panel panel-default">
+            <div id="upload-success" class="panel-success" style="display: none;"></div>
+            <div id="upload-error" class="panel-error" style="display: none;"></div>
+            <div class="panel-heading">
+              <h3 class="panel-title">Upload a File</h3>
+            </div>
+            <div class="panel-body">
+              <form id="upload-form">
+                <div class="form-group">
+                  <label for="file">File input</label>
+                  <input type="file" id="file">
+                </div>
 
-    <div id='map'></div>
+                <img src="../js/exif-js/example/Jetty-Island-pano.jpg" id="img5" />
+                <pre id="allMetaDataSpan"></pre>
+                <br/>
+                
+                <div class="form-group">
+                  <label for="filename">File Name <small>(optional)</small></label>
+                  <input type="text" class="form-control" id="filename" placeholder="File Name">
+                  <span class="help-block">The file name of the file will be used if no file name is provided.</span>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="public">
+                    Upload as a public image
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+              </form>
+              <div id="upload-progress" class="progress" style="margin-top: 10px; display: none;">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%">
+                  Uploading File...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <script type="text/javascript" src="../js/exif-js/exif.js"></script>
+    <script>
+        "use strict";
+        window.onload=getExif;
+
+        function getExif() {
+           
+            var img5 = document.getElementById("img5");
+            EXIF.getData(img5, function () {
+                var allMetaData = EXIF.getAllTags(this);
+                var allMetaDataSpan = document.getElementById("allMetaDataSpan");
+                allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+            });
+        }
+    </script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/rsvp.min.js"></script>
     <script src="js/kinvey-html5-sdk.min.js"></script>
     <script src="js/app.js"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
-    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css' />
-    <style>
-    #geocoder-container > div {
-     min-width:50%;
-     margin-left:25%;
-     position: sticky;
-     top: 65px;
-    }
-</style>
-    <script>
-      mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
-      var map = new mapboxgl.Map({
-        container: 'map', // container id
-          //style: 'mapbox://styles/cpsarason/cj70tri0o045h2rpl7g4e5aws', // stylesheet location
-        style: 'mapbox://styles/mapbox/light-v9', // stylesheet location
-        center: [-122.3383, 47.6027], // starting position [lng, lat]
-        zoom: 9 // starting zoom
-      });
-
-
-      var geocoder = new MapboxGeocoder({
-          accessToken: mapboxgl.accessToken
-      });
-
-      map.addControl(geocoder);
-
-      // After the map style has loaded on the page, add a source layer and default
-      // styling for a single point.
-      map.on('load', function() {
-          map.addSource('single-point', {
-              "type": "geojson",
-              "data": {
-                  "type": "FeatureCollection",
-                  "features": []
-              }
-          });
-
-          map.addLayer({
-              "id": "point",
-              "source": "single-point",
-              "type": "circle",
-              "paint": {
-                  "circle-radius": 10,
-                  "circle-color": "#007cbf"
-              }
-          });
-
-          map.addSource('noaa-3ft', {
-              'type': 'raster',
-              'tiles': [
-                  'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}'
-              ],
-              'tileSize': 256
-          });
-          map.addLayer({
-              'id': 'noaa-3ft',
-              'type': 'raster',
-              'source': 'noaa-3ft'
-
-          });
-
-          map.setPaintProperty('noaa-3ft', 'raster-opacity', 0.5)
-
-          // Listen for the `geocoder.input` event that is triggered when a user
-          // makes a selection and add a symbol that matches the result.
-          geocoder.on('result', function(ev) {
-              map.getSource('single-point').setData(ev.result.geometry);
-          });
-
-          map.addControl(new mapboxgl.NavigationControl());
-          // Add geolocate control to the map.
-          map.addControl(new mapboxgl.GeolocateControl({
-              positionOptions: {
-                  enableHighAccuracy: true
-              },
-              trackUserLocation: true
-          }));
-      });
-      </script>
-
   </body>
 </html>

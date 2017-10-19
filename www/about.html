@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Sea It Rise, Coastal Resiliency Planner</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/todc-bootstrap.min.css">
+    <link rel="stylesheet" href="css/app.css">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { 
+                margin:45; 
+                padding:0;  
+                background-position: center-center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-attachment: fixed; 
+                width: 100%; 
+                height: 100%;
+              } 
+        #about { padding:45; }
+        #map { position:absolute; top:45px; bottom:0; width:100%; }
+        #sirbackground { position:sticky}
+    </style>
+  </head>
+  <body>
+    <!--[if lte IE 9]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    <nav class="navbar navbar-masthead navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/index.html">Sea It Rise</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a id="books-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Map<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/map.html">Street Map</a></li>
+                <li><a href="/map-0ft.html">Map w/ NOAA 0ft overlay</a></li>
+                <li><a href="/map-3ft.html">Map w/ NOAA 3ft overlay</a></li>
+                <li><a href="/map-6ft.html">Map w/ NOAA 6ft overlay</a></li>
+                <li><a href="/experiment/mapbox-dashboard.html">Desktop Prototype</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a id="books-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tide Heights<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/tides.html">Tide Heights</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a id="books-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Upload Images<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/files.html">View Uploads</a></li>
+                <li><a href="/upload.html">Upload an Image</a></li>
+                <li><a href="/"<i>AR View (coming soon)</i></a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a id="account-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/profile.html">Profile</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/logout.html">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+<!--simple map display from Mapbox-->
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/rsvp.min.js"></script>
+    <script src="js/kinvey-html5-sdk.min.js"></script>
+    <script src="js/app.js"></script>
+    
+   <div id="map"><h1>Sea It Rise, A Coastal Resiliency Planner</h1>
+      <h2>The Problem</h2>
+      <p><img src="img/menemsha-tex.png" align="right" /></img>
+          Rising seas threaten the infrastructure needed for jobs, industry, recreation and everyday life. Roads, bridges, subways, 
+          port facilities, piers, docks, oil and gas wells, power (including nuclear!) plants, sewage treatment plants, coastal 
+          levies -- the list is practically endless -- are all at risk from sea level rise. Rising seas threaten fish habitat, including 
+          coral reefs and mangrove forests, and freshwater aquifers. Rising seas are leading to rapid coastal erosion of cliffs 
+          and dunes in some local shoreline regions and affect shoreline access for recreational activities. The seas are rising 
+          and will rise faster later this century. The historical data is clear and the scientific consensus is unequivocal. Even 
+          so, the rate of change is small, and the desire to adapt to sea level increase is not overwhelming. This is unfortunate 
+          because sea level rise directly affects public safety, local fisheries, shipping and trade. Indeed, since human society 
+          has flourished during a period of relative sea level stability, almost all of our coastal infrastructure and livelihood 
+          is built around the current height of the ocean.
+      </p>
+      <h2>The HeroX Challenge</h2>
+      <p>
+       A wealth of ocean data has been and is being collected. Many of the datasets are open, yet very few are 
+          being used for resource management, business, or conservation. Most businesses, let alone individuals, 
+          do not have the time or ability to translate ocean data into actionable information, yet large industries 
+          and millions of people rely on the ocean for their livelihoods and well-being.
+       </p>
+       <p>So long as ocean data remain disconnected from services that people and markets can use, we will 
+           be unable to engage the numbers of actors needed to address critical ocean challenges. Data 
+           collection is not evenly distributed across the ocean -- some regions are in need of data acquisition, 
+           a need that could be addressed through the development of demand for data services, which will 
+           in turn drive demand for data collection tools. Overall, there is a market failure for meaningful 
+           data services, and the time is ripe for market development.
+        </p>
+       <p>You can read more about our HeroX submission on our <a href="https://herox.com/bigoceanbutton/entry/15117">application
+           page</a>.
+       </p>
+      <h2>The Data and Map Technology</h2>
+      <h3>NOAA Coastal Planning Sea Level Modeling</h3>
+       <p>Data for the sea level rise overlay shown in our app are from the <a href="https://coast.noaa.gov/">NOAA Office for 
+           Coastal Management</a>. Modeling of relative sea level rise is complicated, and requires more than just moving 
+           sea level up by some number. NOAA provides these data
+           for free via a WMS server for easy integration.
+       </p>
+      <h3>Powered by Mapbox</h3>
+       <p>Mapping on web pages and smartphones has become a central use case many are familiar with when they use
+           a directions service to find a new location. We leverage this technology by integrating NOAA's geospatial data with
+           the great technology provided by <a href="https://www.mapbox.com/">Mapbox</a>. They make it very easy to get started
+           and make maps that look great, perform fast and combine lots of different types of information.
+       </p>
+      <h3>Backend As A Service by Kinvey</h3>       
+       <p>We knew we needed to have a backend to manage users and any data uploaded to our system for processing once we
+          get the Augmented Reality tech to work. Initially we thought to roll our own setup until we realized that 
+          <a href="https://www.kinvey.com/">Kinvey</a> offers an amazing product they call "Backend as a Service". Translation? 
+          We don't have to manage the backend service and re-invent a wheel that already works great!
+      </p>
+      <h2>The Team</h2>
+      <p>
+       <ul>
+        <li>Christian Sarason, Immersed In Science (Lead)</li>
+        <li>Matt Pruis, Sage Data Science (Science Lead)</li>
+        <li>Landung (Don) Setiawan, Staff at Applied Physics Lab (Software Engineer)</li>
+        <li>Malea Saul, Student at University of Washington School of Oceanography</li>        
+      </ul> 
+For more information, please see http://www.immersedin.science/sea-level-rise-viewer or contact Christian P. Sarason at cpsarason at immersedin dot science.
+      </p>
+    </div> 
+  </body>
+</html>
