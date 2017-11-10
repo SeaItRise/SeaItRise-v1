@@ -83,11 +83,6 @@
                   <label for="file">File input</label>
                   <input type="file" id="file">
                 </div>
-
-                <img src="../js/exif-js/example/Jetty-Island-pano.jpg" id="img5" />
-                <pre id="allMetaDataSpan"></pre>
-                <br/>
-                
                 <div class="form-group">
                   <label for="filename">File Name <small>(optional)</small></label>
                   <input type="text" class="form-control" id="filename" placeholder="File Name">
@@ -111,26 +106,27 @@
         </div>
       </div>
     </div>
-
+    <img src="../js/exif-js/example/Jetty-Island-single.jpg" id="img5" />
+    <pre id="allMetaDataSpan5"></pre>
+    <br/>
+    
     <script type="text/javascript" src="../js/exif-js/exif.js"></script>
     <script>
-        "use strict";
-        window.onload=getExif;
-
-        function getExif() {
-           
+         "use strict";
+         window.onload=getExif;
+         function getExif() {   
             var img5 = document.getElementById("img5");
             EXIF.getData(img5, function () {
                 var allMetaData = EXIF.getAllTags(this);
-                var allMetaDataSpan = document.getElementById("allMetaDataSpan");
+                var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
                 allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
             });
         }
     </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/rsvp.min.js"></script>
-    <script src="js/kinvey-html5-sdk.min.js"></script>
-    <script src="js/app.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/rsvp.min.js"></script>
+    <script src="../js/kinvey-html5-sdk.min.js"></script>
+    <script src="../js/app.js"></script>
   </body>
 </html>

@@ -265,6 +265,15 @@
       <label for='3ftConfoff' class='col6 center' onclick='toggleConfidence3ft(false)'>OFF</label>
     </div>
   </div>
+  <div class='pad1 section clearfix'>
+    <span class='small uppercase label quiet'>Traffic</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='trafficon' type='radio' name='traffic' value='trafficon' checked='checked'>
+      <label for='trafficon' class='col6 center' onclick='toggleTraffic(true)'>ON</label>
+      <input id='trafficoff' type='radio' name='traffic' value='trafficoff'>
+      <label for='trafficoff' class='col6 center' onclick='toggleTraffic(false)'>OFF</label>
+    </div>
+  </div>
   <div class='pad1 section clearfix hidden'>
     <span class='small uppercase label quiet short'>Inspector</span>
     <div class='rounded-toggle fr col8'>
@@ -306,12 +315,12 @@
   </div>
 </div>
 <script>
- mapboxgl.accessToken = 'pk.eyJ1IjoicGV0ZXJxbGl1IiwiYSI6ImpvZmV0UEEifQ._D4bRmVcGfJvo1wjuOpA1g';
+// mapboxgl.accessToken = 'pk.eyJ1IjoicGV0ZXJxbGl1IiwiYSI6ImpvZmV0UEEifQ._D4bRmVcGfJvo1wjuOpA1g';
     
-//    mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/peterqliu/ciug032my008f2ipm1z1rf15q', //stylesheet location
+    style: 'mapbox://styles/cpsarason/cj9u9vg903q7n2sp417w1j0qs', //stylesheet location
     center: [-122.4232292175293,37.784282779035216], // starting position
     hash: false,
     zoom: 12, // starting zoom
@@ -324,7 +333,7 @@ var map = new mapboxgl.Map({
 
 var minimap = new mapboxgl.Map({
     container: 'minimap', // container id
-    style: 'mapbox://styles/peterqliu/ciug032my008f2ipm1z1rf15q', //stylesheet location
+    style: 'mapbox://styles/cpsarason/cj9u9vg903q7n2sp417w1j0qs', //stylesheet location
     center: [-96.34406, 42], // starting position
     interactive: false,
     hash: false,
@@ -674,6 +683,10 @@ var tinySquare =
       'type':'vector',
       'url':'mapbox://peterqliu.d0vin3el'
     })
+    .addSource('traffic-v1', {
+          'type': 'vector',
+          'url': 'mapbox://mapbox.mapbox-traffic-v1'
+    })
     .addSource('noaa-conf-3ft', {
         'type': 'raster',
         'tiles': [
@@ -728,11 +741,11 @@ var tinySquare =
       'paint.tilted':{
       }
     }, 'water')
-    .addLayer({
-      'id': 'noaa-conf-3ft',
-      'type': 'raster',
-      'source': 'noaa-conf-3ft'
-    })
+//    .addLayer({
+//      'id': 'noaa-conf-3ft',
+//      'type': 'raster',
+//      'source': 'noaa-conf-3ft'
+//    })
     .addLayer({
     	'id':'extrusions',
       'type':'fill',
@@ -776,6 +789,11 @@ var tinySquare =
       }
     })
     .addLayer({
+        'id': 'traffic-layer',
+        'type': 'line',
+        'source':'traffic-v1'
+    })
+    .addLayer({
       'id':'highlighted_extrusion',
       'type':'fill',
       'source':'highlight',
@@ -790,7 +808,7 @@ var tinySquare =
       }
     }, 'airport-label')
 
-    map.setPaintProperty('noaa-conf-3ft', 'raster-opacity', 0.5)
+//    map.setPaintProperty('noaa-conf-3ft', 'raster-opacity', 0.5)
     // sync map to legend
 
     map
@@ -900,6 +918,11 @@ var tinySquare =
   function toggleConfidence3ft(transValue) {
       var transValue = transValue*0.5;
       map.setPaintProperty('noaa-conf-3ft', 'raster-opacity', transValue)
+  }
+  // show/hide traffic
+  function toggleTraffic(transValue) {
+    var transValue = transValue * 0.5;
+      map.setPaintProperty('traffic-layer', 'opacity', transValue)
   }
   // show/hide roads
   function toggleRoads(truthiness){

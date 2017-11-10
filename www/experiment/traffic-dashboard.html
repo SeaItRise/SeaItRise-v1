@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+    <meta charset='utf-8' />
+    <title>Sea It Rise, Coastal Resiliency Planner Desktop Viewer</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.26.0/mapbox-gl.js'></script>
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
+    <script src='geocoder.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.1/mapbox-gl-geocoder.css' type='text/css' />
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.23.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0;}
+        #map { 
+            position:absolute; 
+            top:0; bottom:0; 
+            right:0; 
+            left:300px; 
+            background:rgba(52,51,50,1);
+            overflow:hidden;
+        }
+        #sidebar, #colorscale {
+          background:#333;
+          width:300px;
+        }
+
+        #sidebar{
+          border-right:1px solid #000;
+          height:100%;
+        }
+        .section {
+          border-bottom:1px solid #1c1c1c;
+        }
+
+        .label {
+          line-height:25px;
+        }
+        #tooltip {
+          position:absolute;
+          z-index:100;
+          pointer-events:none;
+          display:none;
+          opacity:0;
+        }
+
+        .inspector:hover #tooltip {
+          opacity:1;
+          display:block;
+        }
+        .inspector .mapboxgl-canvas-container.mapboxgl-interactive {
+          cursor:none;
+        }
+        .dot {
+          width:5px;
+          height:5px;
+          background:white;
+          border-radius:2.5px;
+          position:absolute;
+        }
+        .line {
+          position:absolute;
+          height:0px;
+          width:30px;
+          transform:rotate(45deg);
+          border-top:3px solid #333;
+          transform-origin:left center;
+          z-index:-1;
+          margin-top:-1.5px;
+        }
+        .bubble{
+          background:#333;
+          color:white;
+          padding:6px;
+          margin:15px;
+        }
+        #legend {
+          height:20px;
+          width:100%;
+          background: -webkit-linear-gradient(left, #160e23 0%, #00617f 20%, #55e9ff 100%);
+        }
+
+        /* form elements & geocoder overrides*/
+
+        .mapboxgl-ctrl-geocoder {
+          min-width:0px;
+        }
+        .mapboxgl-ctrl-geocoder, .mapboxgl-ctrl-geocoder ul{
+          width:100%;
+          -webkit-filter:invert(100%);
+          color:white;
+        }
+        .mapboxgl-ctrl-geocoder ul > li.active > a,
+        .mapboxgl-ctrl-geocoder ul > li > a:hover {
+          color:#55e9ff;
+          font-weight:bold;
+          background:black;
+        }
+        .mapboxgl-ctrl-geocoder input[type='text'],
+        .mapboxgl-ctrl-geocoder input[type='text']:focus {
+          color:black;
+        }
+
+        ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: #333;
+        }
+        .mapboxgl-ctrl-geocoder ul,
+        li.active {
+          background: black;
+          color: white;
+        }
+        .fill-dark .rounded-toggle {
+          background:#1c1c1c;
+          color:#222;
+          padding:0px;
+          margin:0px;
+        }
+        .dark .rounded-toggle > *{
+          color:#999;
+        }
+        .fill-dark .rounded-toggle input[type=radio]:checked + label{
+          background:#ccc;
+          color:black;
+          font-weight:bold;
+        }
+
+        .mapboxgl-ctrl-geocoder ul > li > a {
+          color:#ccc;
+        }
+        /* legend stuff */
+
+        #scale{
+          width:120px;
+          margin:10px;
+          height:120px;
+          z-index:-99;
+        }
+        #scale canvas{
+          overflow:hidden;
+          pointer-events:none;
+        }
+        .tilted #colorscale {
+          display:none;
+        }
+        .tilted #scale {
+          z-index:99;
+          background:rgba(0,0,0,0.75);
+          border-radius:50%;
+        }
+
+        #scale .mapboxgl-ctrl,
+        #minimap .mapboxgl-ctrl{
+          display:none;
+        }
+        .icon:not(.big):after,
+        .rcon:not(.big):after{
+          margin:0px;
+          font-size:18px;
+        }
+
+
+        #minimap{
+          height:220px;
+          cursor:crosshair;
+        }
+
+        .marker {
+          width:8px;
+          height:8px;
+          border-radius:50%;
+          border:2px solid #333;
+          background:#55e9ff;
+          cursor:pointer;
+          margin-left:-6px;
+          margin-top:-6px;
+          transition:all 0.2s;
+        }
+
+        .marker:hover{
+          background:orange;
+          width:16px;
+          height:16px;
+          margin-left:-10px;
+          margin-top:-10px;
+          border:2px solid white;
+        }
+        .mapboxgl-popup .mapboxgl-popup-tip{
+          opacity:0;
+        }
+        .mapboxgl-popup-content {
+          background:black;
+          padding:5px;
+        }
+
+        .mobile{
+          display:none;
+        }
+        @media (max-width: 800px) {
+          .desktop {
+            display: none;
+          }
+
+          .mobile{
+            display:block;
+          }
+          #map {
+            left:0px;
+          }
+        }
+    </style>
+</head>
+<body>
+<div class='mobile z100 dark pin-bottom center fill-dark pad1y'>
+  Best experience on desktop
+</div>
+<div id='map' class='inspector'>
+</div>
+<div class='pin-topleft z100 dark fill-dark desktop' id='sidebar'>
+  <div class='pad1 geocoder z100 pin-top'></div>
+  <div class='pad1 section clearfix '>
+    <span class='small uppercase label quiet'>roads</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='roadson' type='radio' name='roads' value='roadson' checked='checked'>
+      <label for='roadson' class='col6 center' onclick='toggleRoads(true)'>ON</label>
+      <input id='roadsoff' type='radio' name='roads' value='roadsoff'>
+      <label for='roadsoff' class='col6 center' onclick='toggleRoads(false)'>OFF</label>
+    </div>
+  </div>
+  <div class='pad1 section clearfix'>
+    <span class='small uppercase label quiet'>Labels</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='labelon' type='radio' name='labels' value='labelon' checked='checked'>
+      <label for='labelon' class='col6 center' onclick='toggleLabels(true)'>ON</label>
+      <input id='labeloff' type='radio' name='labels' value='labeloff'>
+      <label for='labeloff' class='col6 center' onclick='toggleLabels(false)'>OFF</label>
+    </div>
+  </div>
+  <div class='pad1 section clearfix '>
+    <span class='small uppercase label quiet'>roads</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='roadtrafficon' type='radio' name='roads' value='roadtrafficon' checked='checked'>
+      <label for='roadtrafficon' class='col6 center' onclick='toggleRoads(true)'>ON</label>
+      <input id='roadtrafficoff' type='radio' name='roads' value='roadtrafficoff'>
+      <label for='roadtrafficoff' class='col6 center' onclick='toggleRoads(false)'>OFF</label>
+    </div>
+  </div>
+  <div class='pad1 section clearfix'>
+    <span class='small uppercase label quiet'>NOAA 3' SLR Confidence</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='3ftConfon' type='radio' name='3ftConf' value='3ftConfon' checked='checked'>
+      <label for='3ftConfon' class='col6 center' onclick='toggleConfidence3ft(true)'>ON</label>
+      <input id='3ftConfoff' type='radio' name='3ftConf' value='3ftConfoff'>
+      <label for='3ftConfoff' class='col6 center' onclick='toggleConfidence3ft(false)'>OFF</label>
+    </div>
+  </div>
+  <div class='pad1 section clearfix'>
+    <span class='small uppercase label quiet'>NOAA 3' SLR Depth</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='3ftDepthon' type='radio' name='3ftDepth' value='3ftDepthon' checked='checked'>
+      <label for='3ftDepthon' class='col6 center' onclick='toggleDepth3ft(true)'>ON</label>
+      <input id='3ftDepthoff' type='radio' name='3ftDepth' value='3ftDepthoff'>
+      <label for='3ftDepthoff' class='col6 center' onclick='toggleDepth3ft(false)'>OFF</label>
+    </div>
+  </div>
+
+<!--  <div class='pad1 section clearfix'>
+    <span class='small uppercase label quiet'>Traffic</span>
+    <div class='rounded-toggle fr col4'>
+      <input id='trafficon' type='radio' name='traffic' value='trafficon' checked='checked'>
+      <label for='trafficon' class='col6 center' onclick='toggleTraffic(true)'>ON</label>
+      <input id='trafficoff' type='radio' name='traffic' value='trafficoff'>
+      <label for='trafficoff' class='col6 center' onclick='toggleTraffic(false)'>OFF</label>
+    </div>
+  </div>-->
+<!--  <div class='pad1 section clearfix hidden'>
+    <span class='small uppercase label quiet short'>Inspector</span>
+    <div class='rounded-toggle fr col8'>
+      <input id='none' type='radio' name='inspector' value='none'>
+      <label for='none' class='col4 center' onclick='setInspector("none")'>None</label>
+      <input id='radius' type='radio' name='inspector' value='radius'>
+      <label for='radius' class='col4 center' onclick='setInspector("radius")'>Radius</label>
+      <input id='block' type='radio' name='inspector' value='block' checked='checked'>
+      <label for='block' class='col4 center' onclick='setInspector("block")'>Block</label>
+    </div>
+  </div>-->
+  <div class='section clearfix checkbox-pill pill hidden'>
+    <input type='checkbox' id='checkbox-penny' checked='checked'>
+    <label for='checkbox-penny' class='button icon check col6 small uppercase label quiet'>Labels</label>
+    <input type='checkbox' id='checkbox-pizza' checked='checked'>
+    <label for='checkbox-pizza' class='button icon check col6 small uppercase label quiet'>Roads</label>
+  </div>
+
+  <div class='pad1 section clearfix'>
+      <p><a href="../index.html">Sea It Rise Homepage</a></p>
+  </div>
+</div>
+
+<script>
+    
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+
+    // Get url parameters, from http://blog.mastermaps.com/2012/10/how-to-control-your-leaflet-map-with.html
+    var url_params = {};
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+        url_params[key] = value;
+    });
+
+    if (url_params.layers) {
+        var activeLayers = url_params.layers.split(',').map(function (item) { // map function not supported in IE < 9
+            return layers[item];
+        });
+    }
+
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/cpsarason/cj9u9vg903q7n2sp417w1j0qs', //stylesheet location
+    center: [url_params.lon || -122.4232292175293, url_params.lat || 37.784282779035216], // starting position
+    hash: false,
+    zoom: url_params.zoom || 12, // starting zoom
+    minZoom: 8,
+    maxZoom:16,
+      attributionControl: {
+      position: 'bottom-left'
+    }
+});
+
+
+  map.on('load', function(){
+
+      //set up data sources
+      //map.addSource('', {
+      //    'type':'vector',
+      //    'url': 'mapbox://styles/cpsarason/cj9u9vg903q7n2sp417w1j0qs'
+      //})
+
+      map.addSource('noaa-conf-3ft', {
+          'type': 'raster',
+          'tiles': [
+              'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}'
+          ],
+          'tileSize': 256
+      })
+      .addSource('noaa-slr-3ft', {
+          'type': 'raster',
+          'tiles': [
+              'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer/tile/{z}/{y}/{x}'
+          ],
+          'tileSize': 256
+      })
+      .addSource('noaa-conf-6ft', {
+          'type': 'raster',
+          'tiles': [
+              'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_6ft/MapServer/tile/{z}/{y}/{x}'
+          ],
+          'tileSize': 256
+      })
+      .addSource('noaa-slr-6ft', {
+          'type': 'raster',
+          'tiles': [
+              'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer/tile/{z}/{y}/{x}'
+          ],
+          'tileSize': 256
+      })
+      
+      //set up data layers
+      map
+      .addLayer({
+          'id': 'noaa-conf-3ft',
+          'type': 'raster',
+          'source': 'noaa-conf-3ft'
+      })
+      .addLayer({
+          'id': 'noaa-slr-3ft',
+          'type': 'raster',
+          'source': 'noaa-slr-3ft'
+      })
+      //.addLayer({
+      //    'id': 'traffic-layer',
+      //    'type': 'line',
+      //    'source':'traffic-v1'
+      //})
+
+      map.setPaintProperty('noaa-conf-3ft', 'raster-opacity', 0.5)
+      map.setPaintProperty('noaa-slr-3ft', 'raster-opacity', 0.5)
+      
+  });
+  // add geocoder
+      var geoCoder = new mapboxgl.Geocoder(
+        {
+          'container': document.querySelector('.geocoder'), 'placeholder': 'Explore any US city...', 'country': 'us'
+        });
+      map.addControl(geoCoder);
+      if (url_params.city) { geoCoder.query(url_params.city) };
+
+      map
+        .on('rotate', function(){
+            scale
+              .setBearing(map.getBearing())
+        })
+      // add navigation control
+      map.addControl(new mapboxgl.NavigationControl());
+
+      // Add geolocate control to the map.
+      map.addControl(new mapboxgl.GeolocateControl({
+          positionOptions: {
+              enableHighAccuracy: true
+          },
+          trackUserLocation: true
+      }));
+
+      // show/hide labels
+      function toggleLabels(truthiness){
+          var visibility = truthiness ? 'visible' : 'none'
+          map.style.stylesheet.layers.forEach(function(layer){
+              if (layer.type === 'symbol') map.setLayoutProperty(layer.id, 'visibility', visibility)
+          })
+      }
+      // show/hide roads
+      function toggleRoads(truthiness) {
+          var visibility = truthiness ? 'visible' : 'none'
+          map.style.stylesheet.layers.forEach(function (layer){
+              if (layer.type === 'line') map.setLayoutProperty(layer.id, 'visibility', visibility)
+          })
+      }
+      // show/hide NOAA
+      function toggleConfidence3ft(transValue) {
+          var transValue = transValue*0.5;
+          map.setPaintProperty('noaa-conf-3ft', 'raster-opacity', transValue)
+      }
+      function toggleDepth3ft(transValue) {
+          var transValue = transValue * 0.5;
+          map.setPaintProperty('noaa-slr-3ft', 'raster-opacity', transValue)
+      }
+ 
+      //Traffic -- -should be easy but can't get this to work.
+      //function toggleTraffic(truthiness){
+      //    var visibility = truthiness ? 'visible' : 'none'
+      //    map.style.stylesheet.layers.forEach(function(layer){
+      //        if (layer.source-layer === 'traffic') map.setLayoutProperty(layer.id, 'visibility', visibility)
+      //    })
+      //}
+      
+
+</script>
+
+</body>
+</html>
