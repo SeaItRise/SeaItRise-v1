@@ -212,6 +212,56 @@ var app = {
         });
     },
 
+    loadGeoFiles: function (bbox_ll,bbox_ur) {
+        // Render the table
+        function renderTable(files, selector) {
+            // Default files to an empty array
+            files = files || [];
+
+            // Create the rows
+            var rows = files.map(function (file) {
+                return '<tr>\n'
+                  + '<td>' + file._filename + '</td>\n'
+                  + '<td>' + file.mimeType + '</td>\n'
+                  + '<td>' + file._public + '</td>\n'
+                  + '<td><a target="_blank" href="' + file._downloadURL + '">Download URL</a></td>\n'
+                  + '</tr>';
+            });
+
+            // Create the table
+            var html = '<table class="table table-striped">\n'
+              + '<thead>\n'
+              + '<tr>\n'
+              + '<th>Filename</th>\n'
+              + '<th>MIME Type</th>\n'
+              + '<th>Public</th>\n'
+              + '<th>Url</th>\n'
+              + '</tr>\n'
+              + '</thead>\n'
+              + '<tbody>\n'
+              + rows.join('')
+              + '</tbody>\n'
+              + '</table>\n';
+
+            // Add the html to the page
+            $(selector).html(html);
+        }
+
+        //search_coord = [-122.0, 47.0];
+        //radius = 100;
+        // create query
+        var query = new Kinvey.Query();
+        //query.near('_geoloc', search_coord,radius)
+        query.withinBox('_geoloc', bbox_ll,bbox_ur);
+
+        // Load the files
+        //Kinvey.Files.find()
+        Kinvey.Files.find(query)
+          .then(function (files) {
+              return renderTable(files, '#files-table')
+          });
+    },
+
     uploadFile: function(event) {
       // Prevent the form from being submitted
       event.preventDefault();
