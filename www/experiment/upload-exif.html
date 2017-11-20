@@ -100,29 +100,39 @@
                 <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%">
                   Uploading File...
                 </div>
+             
+              </div>
+              <div id="exif-data" class="panel-body">
+                 Here is exif div
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <img src="../js/exif-js/example/Jetty-Island-single.jpg" id="img5" />
-    <pre id="allMetaDataSpan5"></pre>
     <br/>
+    <button onclick="getLocation()">Try It</button>
+
+    <div id="demo">here is some text</demo>
+
+<script>
+var x = document.getElementById("demo");
+var test_location = getLocation();
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "<p>Geolocation is not supported by this browser.</p>";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "<p>Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude+"</p>";
+}
+</script>
     
     <script type="text/javascript" src="../js/exif-js/exif.js"></script>
-    <script>
-         "use strict";
-         window.onload=getExif;
-         function getExif() {   
-            var img5 = document.getElementById("img5");
-            EXIF.getData(img5, function () {
-                var allMetaData = EXIF.getAllTags(this);
-                var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
-                allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
-            });
-        }
-    </script>
     <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/rsvp.min.js"></script>

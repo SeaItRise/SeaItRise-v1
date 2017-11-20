@@ -12,10 +12,10 @@
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
         .marker {
-          background-image: url('mapbox-icon.png');
+          background-image: url('sea-it-rise-flickr-icon.png');
           background-size: cover;
-          width: 50px;
-          height: 50px;
+          width: 75px;
+          height: 75px;
           border-radius: 50%;
           cursor: pointer;
         }
@@ -107,7 +107,10 @@
         map.addLayer({
             'id': 'noaa-3ft',
             'type': 'raster',
-            'source': 'noaa-3ft'
+            'source': 'noaa-3ft',
+            'layout': {
+                'visibility': 'none'
+            }
 
         });
 
@@ -121,7 +124,10 @@
         map.addLayer({
             'id': 'noaa-6ft',
             'type': 'raster',
-            'source': 'noaa-6ft'
+            'source': 'noaa-6ft',
+            'layout': {
+                'visibility': 'none'
+            }
         });
 
     });
@@ -168,28 +174,28 @@
         })
     );
 
-    mapBBox = map.getBounds()._sw.lat + ',' + map.getBounds()._sw.lng
+    //mapBBox = map.getBounds()._sw.lat + ',' + map.getBounds()._sw.lng
 
-    var flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + 
-        flickr_apikey +
-        '&tags=beach' +
-        '&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng + '&accuracy=11' + '&radius=25' +
-        '&per_page=10&format=json&nojsoncallback=1';
+    //var flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + 
+    //    flickr_apikey +
+    //    '&tags=beach' +
+    //    '&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng + '&accuracy=11' + '&radius=25' +
+    //    '&per_page=10&format=json&nojsoncallback=1';
 
-    var photo_geojson = {
-        type: 'FeatureCollection',
-        features: [{
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [0, 0]
-            },
-            properties: {
-                title: 'Origin',
-                description: '#seaitrise tag from Flickr'
-            }
-        }]
-    };
+    //var photo_geojson = {
+    //    type: 'FeatureCollection',
+    //    features: [{
+    //        type: 'Feature',
+    //        geometry: {
+    //            type: 'Point',
+    //            coordinates: [0, 0]
+    //        },
+    //        properties: {
+    //            title: 'Origin',
+    //            description: '#seaitrise tag from Flickr'
+    //        }
+    //    }]
+    //};
 
     var photo_keys = [];
 
@@ -236,7 +242,18 @@
     //        });
     //    });
     //});
+
+    // Flickr markers will get added
     map.on('zoom', function () {
+        getFlickrMarkers();
+    });
+    map.on('drag', function () {
+        getFlickrMarkers();
+    });
+
+
+
+    function getFlickrMarkers() {
 
         // this wipes out the photo markers for the current zoom extent. Should probably limit number of markers to 50 or something.
         var photo_geojson = {
@@ -270,7 +287,7 @@
                     //var test_data = $.getJSON(photoinfo_url);
                     
                     if (photo_keys.includes(metadata.photo.title._content)) {
-                        console.log('Found this one! ' + metadata.photo.title._content)
+                        true;// console.log('Found this one! ' + metadata.photo.title._content)
                     } else {
 
                         //console.log(metadata.photo.title._content)
@@ -321,14 +338,14 @@
                                  '<p align="center"><img src="' + marker.properties.flickr_largesq_url + '"/>' + '</p>' +
                                  '<p align="center">' + marker.properties.description + '</p>'))
                         .addTo(map);
-                        console.log(marker.properties.flickr_largesq_url)
+                        //console.log(marker.properties.flickr_largesq_url)
                     });
                     //console.log(metadata)
 
                 });
             });
         });
-    });
+    };
 
 </script>
 

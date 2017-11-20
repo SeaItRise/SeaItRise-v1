@@ -269,6 +269,7 @@ var app = {
       // Remove the upload-success and upload-error
       $('#upload-success').hide(0);
       $('#upload-error').hide(0);
+      $('#exif-data').hide(0);
 
       // Get entered values
       var file = $('#file')[0].files[0];
@@ -277,6 +278,18 @@ var app = {
         var filename = $('#filename').val();
         var public = document.getElementById('public').checked;
         filename = filename || filename !== '' ? filename : file.name;
+
+          // this is where I think the EXIF scrape can come for uploading to Kinvey. 
+          // Really belongs as a pre-save file hook on Kinvey, though.
+
+        var testData = EXIF.getData(filename, function () {
+            var allMetaData = EXIF.getAllTags(this);
+            var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
+            allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+            $('#exif-data').html('<p>here is EXIF section after processing</p>').show(0);
+        });
+        
+        //$('#exif-data').show(0);
 
         // Show progress
         $('#upload-progress').show(0);
@@ -289,7 +302,17 @@ var app = {
 
             // Show success message
             $('#upload-success').html('<p>File uploaded!</p>').show(0);
+
+            var testData = EXIF.getData(filename, function () {
+                var allMetaData = EXIF.getAllTags(this);
+                var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
+                allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+                $('#exif-data').html('<p>here is EXIF section after processing</p>').show(0);
+            });
+
+            $('#exif-data').html('<p>' + testData + '</p>').show(0);
           })
+           
           .catch(function(error) {
             // Hide progress
             $('#upload-progress').hide(0);
@@ -342,6 +365,7 @@ var authorizedHrefs = [
   '/files.html',
   '/upload.html',
   '/profile.html',
+  '/experiment/upload-exif.html',
   '/tides.html'
 ];
 
