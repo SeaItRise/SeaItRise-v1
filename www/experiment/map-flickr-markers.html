@@ -130,6 +130,8 @@
             }
         });
 
+        getFlickrMarkers();
+
     });
 
     var toggleableLayerIds = [ 'noaa-3ft', 'noaa-6ft' ];
@@ -171,77 +173,11 @@
             enableHighAccuracy: true
         },
         trackUserLocation: true
-        })
+       })
+
     );
 
-    //mapBBox = map.getBounds()._sw.lat + ',' + map.getBounds()._sw.lng
-
-    //var flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + 
-    //    flickr_apikey +
-    //    '&tags=beach' +
-    //    '&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng + '&accuracy=11' + '&radius=25' +
-    //    '&per_page=10&format=json&nojsoncallback=1';
-
-    //var photo_geojson = {
-    //    type: 'FeatureCollection',
-    //    features: [{
-    //        type: 'Feature',
-    //        geometry: {
-    //            type: 'Point',
-    //            coordinates: [0, 0]
-    //        },
-    //        properties: {
-    //            title: 'Origin',
-    //            description: '#seaitrise tag from Flickr'
-    //        }
-    //    }]
-    //};
-
     var photo_keys = [];
-
-    //$.getJSON(flickr_apiurl, function (json) {
-    //    $.each(json.photos.photo, function (i, myresult) {
-    //        apiurl_size = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=920844c221cb26575c090ad0c48e554d&photo_id=" + myresult.id + "&format=json&nojsoncallback=1";
-    //        photoinfo_url = 'https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + flickr_apikey + '&photo_id=' + myresult.id + '&format=json&nojsoncallback=1';
-    //        $.getJSON(photoinfo_url, function (metadata) {
-    //            //var test_data = $.getJSON(photoinfo_url);
-    //            //console.log(photo_geojson.features.includes(metadata.photo.title._content) );
-    //            //console.log('Found This One!' + metadata.photo.title._content);
-    //           // } else {
-    //                photo_geojson = {
-    //                    type: 'FeatureCollection',
-    //                    features: [{
-    //                        type: 'Feature',
-    //                        geometry: {
-    //                            type: 'Point',
-    //                            coordinates: [metadata.photo.location.longitude, metadata.photo.location.latitude]
-    //                        },
-    //                        properties: {
-    //                            title: metadata.photo.title._content,
-    //                            description: '#seaitrise tag from Flickr'
-    //                        }
-    //                    }]
-    //                };
-    //            //}
-
-    //            //photo_geojson.features.forEach(function (marker) {
-
-    //            //    // create a HTML element for each feature
-    //            //    var el = document.createElement('div');
-    //            //    el.className = 'marker';
-
-    //            //    // make a marker for each feature and add to the map
-    //            //    new mapboxgl.Marker(el)
-    //            //    .setLngLat(marker.geometry.coordinates)
-    //            //    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-    //            //    .setHTML('<h3><a href="' + metadata.photo.urls.url[0]._content + '">' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-    //            //    .addTo(map);
-    //            //});
-    //            //console.log(metadata.photo.urls.url[0]._content)
-                
-    //        });
-    //    });
-    //});
 
     // Flickr markers will get added
     map.on('zoom', function () {
@@ -250,8 +186,6 @@
     map.on('drag', function () {
         getFlickrMarkers();
     });
-
-
 
     function getFlickrMarkers() {
 
@@ -274,7 +208,7 @@
 
         flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' +
             flickr_apikey +
-            '&tags=seaitrise,shoreline' +
+            '&tags=hightide, lowtide, surf' +
             '&bbox=' + mapBBox + '&accuracy=16'  +
             '&per_page=10&format=json&nojsoncallback=1';
 
@@ -312,7 +246,7 @@
                             },
                             properties: {
                                 title: metadata.photo.title._content,
-                                description: '#seaitrise and shoreline tags from Flickr',
+                                description: '#hightide, #lowtide and #surf tags from Flickr',
                                 flickr_page_url: metadata.photo.urls.url[0]._content,
                                 flickr_largesq_url: photo_img_url
                             }
