@@ -6,6 +6,9 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
+
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css' />
 
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
     <style>
@@ -165,6 +168,10 @@
         layers.appendChild(link);
     }
 
+    // add search box to map
+    map.addControl(new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken
+    }));
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
     // Add geolocate control to the map.
@@ -177,13 +184,15 @@
 
     );
 
+
+
     var photo_keys = [];
 
     // Flickr markers will get added
-    map.on('zoom', function () {
+    map.on('zoomend', function () {
         getFlickrMarkers();
     });
-    map.on('drag', function () {
+    map.on('dragend', function () {
         getFlickrMarkers();
     });
 
@@ -208,7 +217,7 @@
 
         flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' +
             flickr_apikey +
-            '&tags=seaitrise' +
+            '&tags=seaitrise,hightide,lowtide' +
             '&bbox=' + mapBBox + '&accuracy=16'  +
             '&per_page=10&format=json&nojsoncallback=1';
 
