@@ -365,7 +365,7 @@ var authorizedHrefs = [
   '/files.html',
   '/upload.html',
   '/profile.html',
-  '/experiment/upload-exif.html',
+  '/map-markers.html',
   '/tides.html'
 ];
 
