@@ -21,6 +21,14 @@
         #minimap{
           height:220px;
           cursor:crosshair;
+        .marker {
+          background-image: url('img/sea-it-rise-flickr-icon.png');
+          background-size: cover;
+          width: 75px;
+          height: 75px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
         }
     </style>
 
@@ -146,6 +154,8 @@
         center: [-122.3383, 47.6027], // starting position [lng, lat]
         zoom: 9 // starting zoom
       });
+
+     
          
       map.addControl(new mapboxgl.NavigationControl());
 
@@ -157,15 +167,59 @@
           },
           trackUserLocation: true
       }));
+      center_coords = [map.getCenter().lng, map.getCenter().lat];
+      console.log(center_coords)
+      var markerGeoJSON = {
+          "type": "FeatureCollection",
+          "features": [{
+              "type": "Feature",
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": center_coords
+              },
+              "properties": {
+                  "title": "I Am Here",
+                  "icon": "marker",
+                  "fill-color": "#3887be"
+              }
+          }]
+      };
+      map.on('load', function () {
+
+          map.addLayer({
+              "id": "center",
+              "type": "symbol",
+              "source": {
+                  "type": "geojson",
+                  "data": markerGeoJSON
+              },
+              "layout": {
+                  "icon-image": "marker-15",
+                  "text-field": "{title}",
+                  "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                  "text-offset": [0, 0.6],
+                  "text-anchor": "top"
+              }
+          });
+      });
         
-      map.on('dragend', function() {
+      map.on('drag', function() {
           document.getElementById('user-location-lat').innerHTML = map.getCenter().lat;
           document.getElementById('user-location-lng').innerHTML = map.getCenter().lng;
+          center_coords = [map.getCenter().lng, map.getCenter().lat];
+          //console.log(center_coords)
+          //console.log()
+          markerGeoJSON.features[0].geometry.coordinates = center_coords;
+          map.getSource('center').setData(markerGeoJSON);
       });
      
       map.on('zoomend', function() {
           document.getElementById('user-location-lat').innerHTML = map.getCenter().lat;
           document.getElementById('user-location-lng').innerHTML = map.getCenter().lng;
+          center_coords = [map.getCenter().lng, map.getCenter().lat];
+          //console.log(center_coords)
+          markerGeoJSON.features[0].geometry.coordinates = center_coords;
+          map.getSource('center').setData(markerGeoJSON);
       });
 
     </script>
