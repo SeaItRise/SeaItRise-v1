@@ -217,15 +217,17 @@ var app = {
         function renderTable(files, selector) {
             // Default files to an empty array
             files = files || [];
-
+            console.log(files);
             // Create the rows
             var rows = files.map(function (file) {
                 return '<tr>\n'
                   + '<td>' + file._filename + '</td>\n'
+                  + '<td>' + file._geoloc + '</td>\n'
                   + '<td>' + file.mimeType + '</td>\n'
                   + '<td>' + file._public + '</td>\n'
                   + '<td><a target="_blank" href="' + file._downloadURL + '">Download URL</a></td>\n'
                   + '</tr>';
+                
             });
 
             // Create the table
@@ -233,6 +235,7 @@ var app = {
               + '<thead>\n'
               + '<tr>\n'
               + '<th>Filename</th>\n'
+              + '<th>Lon,Lat</th>\n'
               + '<th>MIME Type</th>\n'
               + '<th>Public</th>\n'
               + '<th>Url</th>\n'
@@ -282,20 +285,18 @@ var app = {
           // this is where I think the EXIF scrape can come for uploading to Kinvey. 
           // Really belongs as a pre-save file hook on Kinvey, though.
 
-        var testData = EXIF.getData(filename, function () {
-            var allMetaData = EXIF.getAllTags(this);
-            var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
-            allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
-            $('#exif-data').html('<p>here is EXIF section after processing</p>').show(0);
-        });
-        
-        //$('#exif-data').show(0);
-
         // Show progress
+
         $('#upload-progress').show(0);
 
+        
+        console.log($('#user-location-lat')[0].textContent);
+        console.log($('#user-location-lng'));
+
+        var file_geoloc = [parseFloat($('#user-location-lng')[0].textContent), parseFloat($('#user-location-lat')[0].textContent)];
+        console.log(file_geoloc);
         // Upload the file
-        Kinvey.Files.upload(file, { filename: filename, public: public }, { timeout: 10 * 60 * 1000 })
+        Kinvey.Files.upload(file, { '_geoloc': file_geoloc, filename: filename, public: public }, { timeout: 10 * 60 * 1000 })
           .then(function() {
             // Hide progress
             $('#upload-progress').hide(0);
@@ -303,14 +304,6 @@ var app = {
             // Show success message
             $('#upload-success').html('<p>File uploaded!</p>').show(0);
 
-            var testData = EXIF.getData(filename, function () {
-                var allMetaData = EXIF.getAllTags(this);
-                var allMetaDataSpan = document.getElementById("allMetaDataSpan5");
-                allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
-                $('#exif-data').html('<p>here is EXIF section after processing</p>').show(0);
-            });
-
-            $('#exif-data').html('<p>' + testData + '</p>').show(0);
           })
            
           .catch(function(error) {
