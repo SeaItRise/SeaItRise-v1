@@ -18,18 +18,19 @@
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css' />
     <style>
-        #minimap{
+        #map{
           height:220px;
           cursor:crosshair;
+        }
         .marker {
-          background-image: url('img/sea-it-rise-flickr-icon.png');
+          background-image: url('img/sea-it-rise-beth-icon.png');
           background-size: cover;
           width: 75px;
           height: 75px;
           border-radius: 50%;
           cursor: pointer;
         }
-        }
+        
     </style>
   </head>
   <body>
@@ -91,7 +92,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div id="minimap" class="minimap"></div>
+          <div id="map" class="map"></div>
           <div class="page-header">
             <h1>Files Collection</h1>
           </div>
@@ -109,8 +110,23 @@
       //bbox_ll = [-123, 47];
       //bbox_ur = [-121, 49];
       mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+      var markerJSON = {
+          type: 'FeatureCollection',
+          features: [{
+              type: 'Feature',
+              geometry: {
+                  type: 'Point',
+                  coordinates: [0, 0]
+              },
+              properties: {
+                  title: 'Origin',
+                  description: '#seaitrise tag from Kinvey'
+              }
+          }]
+      };
+
       var map = new mapboxgl.Map({
-        container: 'minimap', // container id
+        container: 'map', // container id
         //style: 'mapbox://styles/cpsarason/cj94moiy1nro62qp9ngxksgdo', // stylesheet location
         style: 'mapbox://styles/mapbox/light-v9', // stylesheet location
         center: [-122.3383, 47.6027], // starting position [lng, lat]
@@ -124,31 +140,93 @@
           },
           trackUserLocation: true
       }));
+      file_keys = [];
+      map.on('load', function () {
+          mapBBox = map.getBounds();
+          bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
+          bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
 
-
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON, file_keys);
+          addKinveyMarkers(markerJSON);
+      });
       map.on('dragend', function () {
           mapBBox = map.getBounds();
           bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
           bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
-          app.loadGeoFiles(bbox_ll, bbox_ur);
 
+          // wipe out the markerJSON. TODO: THERE HAS TO BE A BETTER WAY
+          //markerJSON = {
+          //    type: 'FeatureCollection',
+          //    features: [{
+          //        type: 'Feature',
+          //        geometry: {
+          //            type: 'Point',
+          //            coordinates: [0, 0]
+          //        },
+          //        properties: {
+          //            title: 'Origin',
+          //            description: '#seaitrise tag from Flickr'
+          //        }
+          //    }]
+          //};
+
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+          addKinveyMarkers(markerJSON);
       });
 
       map.on('zoomend', function () {
           mapBBox = map.getBounds();
           bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
           bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
-          app.loadGeoFiles(bbox_ll, bbox_ur);
-
+     
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+          //console.log(markerJSON)
+          addKinveyMarkers(markerJSON);
       });
 
       $(document).on('app.ready', function () {
           mapBBox = map.getBounds();
           bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
           bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
-          app.loadGeoFiles(bbox_ll, bbox_ur);
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+          //console.log(markerJSON)
+          addKinveyMarkers(markerJSON);
       });
-      
+
+      function addKinveyMarkers(markerJSON) {
+          //console.log(markerJSON)
+
+          //file_keys.push(file._id);
+          //console.log(file_keys.includes(file._id))
+          //console.log(file_keys, file._id)
+
+          //clean up markerJSON
+          markerJSON.features.forEach(function (markerItem) {
+              if (file_keys.includes(markerItem.properties.photo_id)) {
+                  true;
+                  console.log('Found this one! ' + markerItem.properties.photo_id);
+                  markerJSON.features.pop();
+              } else {
+                  file_keys.push(markerItem.properties.photo_id);
+                  marker = markerJSON.features.pop();
+                  var el = document.createElement('div');
+                  el.className = 'marker';
+
+                  // make a marker for each feature and add to the map
+                  //console.log(marker)
+                  new mapboxgl.Marker(el)
+                  .setLngLat(marker.geometry.coordinates)
+                  .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                  .setHTML('<p align="center"><a href="' + marker.properties.photo_page_url + '">' + marker.properties.title + '</a></p>' +
+                          '<p align="center">' + marker.properties.description + '</p>'))
+                  .addTo(map);
+
+                  //console.log(markerItem)
+              }
+          });
+          //              console.log(marker.geometry.coordinates);
+          //              console.log(el)
+      };
     </script>
   </body>
 </html>

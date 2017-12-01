@@ -77,7 +77,8 @@ var app = {
         });
     },
 
-    loadBooks: function(dataStoreType) {
+    loadBooks: function (dataStoreType) {
+      // TODO: add map-center to this function
       // Render the table
       function renderTable(books, selector) {
         // Default books to an empty array
@@ -212,14 +213,32 @@ var app = {
         });
     },
 
-    loadGeoFiles: function (bbox_ll,bbox_ur) {
+    loadGeoFiles: function (bbox_ll,bbox_ur, markerJSON) {
         // Render the table
         function renderTable(files, selector) {
             // Default files to an empty array
             files = files || [];
-            console.log(files);
+          
+            
             // Create the rows
             var rows = files.map(function (file) {
+                    
+                markerJSON.features.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: file._geoloc
+                    },
+                    properties: {
+                        title: file._filename,
+                        description: '#seaitrise from Kinvey',
+                        photo_page_url: file._downloadURL,
+                        photo_id: file._id
+                    }
+
+                });
+                   
+                //console.log(markerJSON)
                 return '<tr>\n'
                   + '<td>' + file._filename + '</td>\n'
                   + '<td>' + file._geoloc + '</td>\n'
@@ -227,14 +246,32 @@ var app = {
                   + '<td>' + file._public + '</td>\n'
                   + '<td><a target="_blank" href="' + file._downloadURL + '">Download URL</a></td>\n'
                   + '</tr>';
-                
+                  
             });
+            //console.log(markerJSON)
+
+            //add the markers to the map
+            //markerJSON.features.forEach(function (marker) {
+            //    // create a HTML element for each feature
+            //    var el = document.createElement('div');
+            //    el.className = 'marker';
+
+            //    // make a marker for each feature and add to the map
+            //    //console.log(marker)
+            //    new mapboxgl.Marker(el)
+            //    .setLngLat(marker.geometry.coordinates)
+            //    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            //    .setHTML('<p align="center"><a href="' + marker.properties.photo_page_url + '">' + marker.properties.title + '</a></p>' +
+            //            '<p align="center">' + marker.properties.description + '</p>'))
+            //    .addTo(markerMap);
+            //    //console.log(marker.properties)
+            //    });
 
             // Create the table
             var html = '<table class="table table-striped">\n'
               + '<thead>\n'
               + '<tr>\n'
-              + '<th>Filename</th>\n'
+              + '<th>Title</th>\n'
               + '<th>Lon,Lat</th>\n'
               + '<th>MIME Type</th>\n'
               + '<th>Public</th>\n'
@@ -246,8 +283,11 @@ var app = {
               + '</tbody>\n'
               + '</table>\n';
 
+
+
             // Add the html to the page
             $(selector).html(html);
+            //return markerJSON;
         }
 
         //search_coord = [-122.0, 47.0];
@@ -261,7 +301,8 @@ var app = {
         //Kinvey.Files.find()
         Kinvey.Files.find(query)
           .then(function (files) {
-              return renderTable(files, '#files-table')
+              //console.log(markerJSON)
+              return markerJSON, renderTable(files, '#files-table')
           });
     },
 
