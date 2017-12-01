@@ -231,6 +231,7 @@ var app = {
                     },
                     properties: {
                         title: file._filename,
+                        icon: 'marker-15',
                         description: '#seaitrise from Kinvey',
                         photo_page_url: file._downloadURL,
                         photo_id: file._id

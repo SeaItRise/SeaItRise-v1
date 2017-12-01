@@ -155,8 +155,12 @@
         zoom: 9 // starting zoom
       });
 
-     
-         
+      // add search box to map
+      map.addControl(new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken
+      }));
+
+        // Add navigation control to the map.
       map.addControl(new mapboxgl.NavigationControl());
 
       // Add geolocate control to the map.
@@ -168,7 +172,10 @@
           trackUserLocation: true
       }));
       center_coords = [map.getCenter().lng, map.getCenter().lat];
-      console.log(center_coords)
+      //console.log(center_coords)
+
+      // Set up placeholder markers and marker_key array
+      marker_keys = [];
       var markerGeoJSON = {
           "type": "FeatureCollection",
           "features": [{
@@ -178,14 +185,55 @@
                   "coordinates": center_coords
               },
               "properties": {
-                  "title": "I Am Here",
+                  "title": "",
                   "icon": "marker",
                   "fill-color": "#3887be"
               }
           }]
       };
-      map.on('load', function () {
 
+      var photosJSON = {
+          "type": "FeatureCollection",
+          "features": [{
+              "type": "Feature",
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": [-122.27112,47.562112]
+              },
+              "properties": {
+                  "title": "Photo Layer Marker",
+                  "icon": "marker",
+                  "fill-color": "#3887be"
+              }
+          }]
+      };
+      var markerJSON = {
+          "type": "FeatureCollection",
+          "features": [{
+              "type": "Feature",
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": [-122.27, 47.561]
+              },
+              "properties": {
+                  "title": "Fixed Marker",
+                  "icon": "marker",
+                  "fill-color": "#3887be"
+              }
+          }]
+      };
+
+      map.on('load', function () {
+          map.loadImage('/img/sea-it-rise-beth-icon.png', function (error, image) {
+              if (error) throw error;
+              map.addImage('SIR-icon', image);
+
+          });
+          map.loadImage('/img/blue-crosshair.png', function (error, image) {
+              if (error) throw error;
+              map.addImage('crosshair', image);
+              
+          });
           map.addLayer({
               "id": "center",
               "type": "symbol",
@@ -194,15 +242,51 @@
                   "data": markerGeoJSON
               },
               "layout": {
-                  "icon-image": "marker-15",
+                  "icon-image": "crosshair",
+                  "icon-size": 0.4,
                   "text-field": "{title}",
                   "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
                   "text-offset": [0, 0.6],
                   "text-anchor": "top"
               }
           });
+          map.addLayer({
+              "id": "photos",
+              "type": "symbol",
+              "source": {
+                  "type": "geojson",
+                  data: photosJSON
+              },
+              "layout": {
+                  "icon-image": "SIR-icon",
+                  "icon-size": 0.3
+              }
+          });
+
+
+          //load up markers for photos from Kinvey
+          //create the bbox to pass to Kinvey
+          bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
+          bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
+
+          //hit Kinvey to find files loaded
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+
+          //process through returned JSON to put up only the markers not already in our set
+          markerJSON.features.forEach(function (markerItem) {
+              if (marker_keys.includes(markerItem.properties.title)) {
+                  true;
+              } else {
+                  //console.log(markerItem);
+                  photosJSON.features.push(markerItem);
+                  marker_keys.push(markerItem.properties.title)
+              }
+          });
+          map.getSource('photos').setData(photosJSON);
+
       });
-        
+      
+
       map.on('drag', function() {
           document.getElementById('user-location-lat').innerHTML = map.getCenter().lat;
           document.getElementById('user-location-lng').innerHTML = map.getCenter().lng;
@@ -211,6 +295,27 @@
           //console.log()
           markerGeoJSON.features[0].geometry.coordinates = center_coords;
           map.getSource('center').setData(markerGeoJSON);
+          
+          //load up markers for photos from Kinvey
+          //create the bbox to pass to Kinvey
+          bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
+          bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
+
+          //hit Kinvey to find files loaded
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+
+          //process through returned JSON to put up only the markers not already in our set
+          markerJSON.features.forEach(function (markerItem) {
+              if (marker_keys.includes(markerItem.properties.title)) {
+                  true;
+              } else {
+                  //console.log(markerItem);
+                  photosJSON.features.push(markerItem);
+                  marker_keys.push(markerItem.properties.title)
+              }
+          });
+          map.getSource('photos').setData(photosJSON);
+
       });
      
       map.on('zoomend', function() {
@@ -219,9 +324,47 @@
           center_coords = [map.getCenter().lng, map.getCenter().lat];
           //console.log(center_coords)
           markerGeoJSON.features[0].geometry.coordinates = center_coords;
+          //update the marker layer to move to the center point
           map.getSource('center').setData(markerGeoJSON);
+
+          //load up markers for photos from Kinvey
+          //create the bbox to pass to Kinvey
+          bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
+          bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
+
+          //hit Kinvey to find files loaded
+          app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
+
+          //process through returned JSON to put up only the markers not already in our set
+          markerJSON.features.forEach(function (markerItem) {
+              if (marker_keys.includes(markerItem.properties.title)) {
+                  true;
+              } else {
+                  //console.log(markerItem);
+                  photosJSON.features.push(markerItem);
+                  marker_keys.push(markerItem.properties.title)
+              }
+          });
+          map.getSource('photos').setData(photosJSON);
       });
 
+      map.on('click', function (e) {
+          var features = map.queryRenderedFeatures(e.point, {
+              layers: ['photos'] // replace this with the name of the layer
+          });
+
+          if (!features.length) {
+              return;
+          }
+
+          var feature = features[0];
+
+          var popup = new mapboxgl.Popup({ offset: [0, -15] })
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML('<p><img height=100 src="' + feature.properties.photo_page_url + '" alt="' + feature.properties.title + '"></p>')
+            .setLngLat(feature.geometry.coordinates)
+            .addTo(map);
+      });
     </script>
 
   </body>
