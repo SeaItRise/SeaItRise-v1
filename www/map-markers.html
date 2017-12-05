@@ -154,6 +154,38 @@
     var flickr_apikey = '920844c221cb26575c090ad0c48e554d';
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+
+    var SIRphotosJSON = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [0,0]
+            },
+            "properties": {
+                "title": "Photo Layer Marker",
+                "icon": "marker",
+                "fill-color": "#3887be"
+            }
+        }]
+    };
+    var SIRmarkerJSON = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [0, 0]
+            },
+            "properties": {
+                "title": "Fixed Marker",
+                "icon": "marker",
+                "fill-color": "#3887be"
+            }
+        }]
+    };
+
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
@@ -208,6 +240,31 @@
             }
         });
 
+        map.loadImage('/img/sea-it-rise-beth-icon.png', function (error, image) {
+            if (error) throw error;
+            map.addImage('SIR-icon', image);
+
+        });
+        map.loadImage('/img/blue-crosshair.png', function (error, image) {
+            if (error) throw error;
+            map.addImage('crosshair', image);
+
+        });
+
+        map.addLayer({
+            "id": "photos",
+            "type": "symbol",
+            "source": {
+                "type": "geojson",
+                data: SIRphotosJSON
+            },
+            "layout": {
+                "icon-image": "SIR-icon",
+                "icon-size": 0.3
+            }
+        });
+
+
         getFlickrMarkers();
 
     });
@@ -259,17 +316,68 @@
 
     );
 
-    var photo_keys = [];
+    var flickr_photo_keys = [];
+    var SIR_photo_keys = [];
 
     // Flickr markers will get added
     map.on('zoomend', function () {
+        getSIRMarkers();
         getFlickrMarkers();
+
     });
     map.on('dragend', function () {
+        getSIRMarkers();
         getFlickrMarkers();
     });
 
+    map.on('click', function (e) {
+        var features = map.queryRenderedFeatures(e.point, {
+            layers: ['photos'] // replace this with the name of the layer
+        });
+
+        if (!features.length) {
+            return;
+        }
+
+        var feature = features[0];
+
+        var popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML('<p><img height=100 src="' + feature.properties.photo_page_url + '" alt="' + feature.properties.title + '"></p>')
+          .setLngLat(feature.geometry.coordinates)
+          .addTo(map);
+    });
+
+
+    function getSIRMarkers() {
+
+        //load up markers for photos from Kinvey
+        //create the bbox to pass to Kinvey
+        bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
+        bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
+
+        //hit Kinvey to find files loaded
+        app.loadGeoFiles(bbox_ll, bbox_ur, SIRmarkerJSON);
+
+        //process through returned JSON to put up only the markers not already in our set
+        SIRmarkerJSON.features.forEach(function (markerItem) {
+            if (SIR_photo_keys.includes(markerItem.properties.title)) {
+                true;
+            } else {
+                //console.log(markerItem);
+                SIRphotosJSON.features.push(markerItem);
+                SIR_photo_keys.push(markerItem.properties.title)
+            }
+        });
+        map.getSource('photos').setData(SIRphotosJSON);
+    };
+
+
+
     function getFlickrMarkers() {
+
+
+        // TODO: Refactor this function's logic to be similar to getSIRMarkers()
 
         // this wipes out the photo markers for the current zoom extent. Should probably limit number of markers to 50 or something.
         var photo_geojson = {
@@ -302,7 +410,7 @@
                 $.getJSON(photoinfo_url, function (metadata) {
                     //var test_data = $.getJSON(photoinfo_url);
                     
-                    if (photo_keys.includes(metadata.photo.title._content)) {
+                    if (flickr_photo_keys.includes(metadata.photo.title._content)) {
                         true;// console.log('Found this one! ' + metadata.photo.title._content)
                     } else {
 
@@ -318,7 +426,7 @@
                         //TODO: refactor this section!
                         //this is a terrible nested loop that is recursively loading, but at least I'm only creating markers for the 
                         //unique values 
-                        photo_keys.push(metadata.photo.title._content);
+                        flickr_photo_keys.push(metadata.photo.title._content);
                         
                         photo_geojson.features.push({
                             type: 'Feature',
@@ -356,7 +464,7 @@
                         .addTo(map);
                         //console.log(marker.properties.flickr_largesq_url)
                     });
-                    console.log(photo_geojson)
+                    //console.log(photo_geojson)
 
                 });
             });
