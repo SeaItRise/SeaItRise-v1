@@ -204,7 +204,7 @@
           markerJSON.features.forEach(function (markerItem) {
               if (file_keys.includes(markerItem.properties.photo_id)) {
                   true;
-                  console.log('Found this one! ' + markerItem.properties.photo_id);
+                  //console.log('Found this one! ' + markerItem.properties.photo_id);
                   markerJSON.features.pop();
               } else {
                   file_keys.push(markerItem.properties.photo_id);
