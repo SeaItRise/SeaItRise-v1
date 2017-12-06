@@ -266,7 +266,7 @@
 
 
         getFlickrMarkers();
-
+        getSIRMarkers();
     });
 
     var toggleableLayerIds = [ 'noaa-3ft', 'noaa-6ft' ];
@@ -321,13 +321,14 @@
 
     // Flickr markers will get added
     map.on('zoomend', function () {
-        getSIRMarkers();
+        
         getFlickrMarkers();
+        getSIRMarkers();
 
     });
     map.on('dragend', function () {
-        getSIRMarkers();
         getFlickrMarkers();
+        getSIRMarkers();
     });
 
     map.on('click', function (e) {
