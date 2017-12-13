@@ -112,6 +112,22 @@
 
       map.addControl(geocoder);
 
+      var NOAA_Stations_JSON = {
+          "type": "FeatureCollection",
+          "features": [{
+              "type": "Feature",
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": [0,0]
+              },
+              "properties": {
+                  "title": "Photo Layer Marker",
+                  "icon": "marker",
+                  "fill-color": "#3887be"
+              }
+          }]
+      };
+
       // After the map style has loaded on the page, add a source layer and default
       // styling for a single point.
       map.on('load', function() {
@@ -140,12 +156,27 @@
               ],
               'tileSize': 256
           });
+
           map.addLayer({
               'id': 'noaa-3ft',
               'type': 'raster',
               'source': 'noaa-3ft'
 
           });
+
+          map.addLayer({
+              "id": "photos",
+              "type": "symbol",
+              "source": {
+                  "type": "geojson",
+                  data: NOAA_Stations_JSON
+              },
+              "layout": {
+                  "icon-image": "SIR-icon",
+                  "icon-size": 0.5
+              }
+          });
+ 
 
           map.setPaintProperty('noaa-3ft', 'raster-opacity', 0.5)
 

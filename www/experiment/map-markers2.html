@@ -243,7 +243,6 @@
             'id': 'noaa-6ft',
             'type': 'raster',
             'source': 'noaa-6ft',
-            'attribution': 'NOAA Office for Coastal Management',
             'layout': {
                 'visibility': 'none'
             }
@@ -292,20 +291,6 @@
                 "icon-size": 0.5
             }
         }, "noaa-stations");
-
-        map.addLayer({
-            "id": "attribution-layer",
-            "type": "circle",
-            "source": {
-                "type": "geojson",
-                "data": {
-                    "type": "Feature",
-                    "properties": {},
-                    "geometry": null
-                }
-            }
-        });
-        map.style.sourceCaches['attribution-layer']._source.attribution = "&copy; NOAA <a href='https://tidesandcurrents.noaa.gov/'>CO-OPS</a> and <a href='https://coast.noaa.gov/digitalcoast/tools/slr'>Office for Coastal Management</a>";
 
         getFlickrMarkers();
         getSIRMarkers();
