@@ -245,7 +245,7 @@ var app = {
                   + '<td>' + file._geoloc + '</td>\n'
                   + '<td>' + file.mimeType + '</td>\n'
                   + '<td>' + file._public + '</td>\n'
-                  + '<td><a target="_blank" href="' + file._downloadURL + '">Download URL</a></td>\n'
+                  + '<td><a target="_blank" href="' + file._downloadURL + '" target="_blank">Download URL</a></td>\n'
                   + '</tr>';
                   
             });

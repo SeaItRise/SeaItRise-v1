@@ -276,7 +276,7 @@
             "source": "noaa-stations",
             "layout": {
                 "icon-image": "tide-station-icon",
-                "icon-size": 0.2
+                "icon-size": 0.6
             }
         });
 
@@ -305,7 +305,7 @@
                 }
             }
         });
-        map.style.sourceCaches['attribution-layer']._source.attribution = "&copy; NOAA <a href='https://tidesandcurrents.noaa.gov/'>CO-OPS</a> and <a href='https://coast.noaa.gov/digitalcoast/tools/slr'>Office for Coastal Management</a>";
+        map.style.sourceCaches['attribution-layer']._source.attribution = "&copy; NOAA <a href='https://tidesandcurrents.noaa.gov/' target='_blank'>CO-OPS</a> and <a href='https://coast.noaa.gov/digitalcoast/tools/slr' target='_blank'>Office for Coastal Management</a>";
 
         getFlickrMarkers();
         getSIRMarkers();
@@ -366,13 +366,13 @@
     // Flickr markers will get added
     map.on('zoomend', function () {
         
-        //getFlickrMarkers();
+        getFlickrMarkers();
         getSIRMarkers();
         getNOAAMarkers();
 
     });
     map.on('dragend', function () {
-        //getFlickrMarkers();
+        getFlickrMarkers();
         getSIRMarkers();
         getNOAAMarkers();
     });
@@ -387,13 +387,13 @@
         };
 
         var feature = features[0];
-        console.log(feature.layer.id);
+        //console.log(feature.layer.id);
 
         if (feature.layer.id == 'noaa-stations') {
             var popup = new mapboxgl.Popup({ offset: [0, -15] })
               .setLngLat(feature.geometry.coordinates)
               .setHTML('<p><center>' + feature.properties.title + '</center></p>' +
-                       '<p><a href="' + feature.properties.station_data_url + '">' +
+                       '<p><a href="' + feature.properties.station_data_url + '" target="_blank">' +
                        feature.properties.station_data_url + '</a></p>')
               .setLngLat(feature.geometry.coordinates)
               .addTo(map);
@@ -406,7 +406,7 @@
             }
         
 
-            console.log(popup);
+            //console.log(popup);
         });
 
     function getNOAAMarkers() {
@@ -607,7 +607,7 @@
                         new mapboxgl.Marker(el)
                         .setLngLat(marker.geometry.coordinates)
                         .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-                        .setHTML('<p align="center"><a href="' + marker.properties.flickr_page_url + '">' + marker.properties.title + '</a></p>' +
+                        .setHTML('<p align="center"><a href="' + marker.properties.flickr_page_url + '" target="_blank">' + marker.properties.title + '</a></p>' +
                                  '<p align="center"><img src="' + marker.properties.flickr_largesq_url + '"/>' + '</p>' +
                                  '<p align="center">' + marker.properties.description + '</p>'))
                         .addTo(map);
