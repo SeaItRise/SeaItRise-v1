@@ -576,7 +576,7 @@
                         //this is a terrible nested loop that is recursively loading, but at least I'm only creating markers for the 
                         //unique values 
                         flickr_photo_keys.push(metadata.photo.title._content);
-                        
+
                         photo_geojson.features.push({
                             type: 'Feature',
                             geometry: {
@@ -589,9 +589,9 @@
                                 flickr_page_url: metadata.photo.urls.url[0]._content,
                                 flickr_largesq_url: photo_img_url
                             }
-                        
+
                         });
-                    }
+                    };
 
                     //now we have 1 good geojson for all the pics, we add it to the map.
                    
