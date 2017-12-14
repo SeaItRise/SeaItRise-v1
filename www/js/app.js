@@ -401,7 +401,6 @@ var authorizedHrefs = [
   '/upload.html',
   '/profile.html',
   '/map-markers.html',
-  '/tides.html'
 ];
 
 // Bind events
@@ -426,7 +425,8 @@ Kinvey.initialize({
     if (!activeUser && authorizedHrefs.indexOf(location.pathname) !== -1) {
       location.replace('/login.html');
     } else {
-     return bindEvents();
+        return bindEvents();
+        console.log(activeUser)
     }
   })
   .then(function() {
