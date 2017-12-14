@@ -322,6 +322,7 @@ var app = {
       if (file) {
         var filename = $('#filename').val();
         var public = document.getElementById('public').checked;
+        var acloptions_json = {};
         filename = filename || filename !== '' ? filename : file.name;
 
           // this is where I think the EXIF scrape can come for uploading to Kinvey. 
@@ -332,13 +333,20 @@ var app = {
         $('#upload-progress').show(0);
 
         
-        console.log($('#user-location-lat')[0].textContent);
-        console.log($('#user-location-lng'));
+        //console.log($('#user-location-lat')[0].textContent);
+        //console.log($('#user-location-lng'));
 
         var file_geoloc = [parseFloat($('#user-location-lng')[0].textContent), parseFloat($('#user-location-lat')[0].textContent)];
-        console.log(file_geoloc);
+        //console.log(file_geoloc);
+        
+        if (!public) {
+            console.log('PRIVATE!!');
+            acloptions_json = { 'gr': false };
+        } else {
+            acloptions_json = { 'gr': true };
+        };
         // Upload the file
-        Kinvey.Files.upload(file, { '_geoloc': file_geoloc, filename: filename, public: public }, { timeout: 10 * 60 * 1000 })
+        Kinvey.Files.upload(file, { '_acl': acloptions_json,'_geoloc': file_geoloc, filename: filename, public: public }, { timeout: 10 * 60 * 1000 })
           .then(function() {
             // Hide progress
             $('#upload-progress').hide(0);
@@ -423,14 +431,14 @@ Kinvey.initialize({
 })
   .then(function(activeUser) {
     if (!activeUser && authorizedHrefs.indexOf(location.pathname) !== -1) {
-      location.replace('/login.html');
+        location.replace('/login.html');
+        //console.log(location.pathname);
     } else {
         return bindEvents();
-        console.log(activeUser)
     }
   })
   .then(function() {
-    $(document).trigger('app.ready');
+      $(document).trigger('app.ready');
   })
   .catch(function(error) {
     alert(error.message);

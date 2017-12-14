@@ -173,8 +173,8 @@
             },
             "properties": {
                 "title": "Fixed Marker",
-                "icon": "marker",
-                "fill-color": "#3887be"
+                //"icon": "marker",
+                //"fill-color": "#3887be"
             }
         }]
     };
@@ -276,7 +276,8 @@
             "source": "noaa-stations",
             "layout": {
                 "icon-image": "tide-station-icon",
-                "icon-size": 0.6
+                "icon-size": 0.6,
+                
             }
         });
 
@@ -289,7 +290,8 @@
             },
             "layout": {
                 "icon-image": "SIR-icon",
-                "icon-size": 0.5
+                "icon-size": 0.5,
+               
             }
         }, "noaa-stations");
 
@@ -371,7 +373,7 @@
         getNOAAMarkers();
 
     });
-    map.on('dragend', function () {
+    map.on('moveend', function () {
         getFlickrMarkers();
         getSIRMarkers();
         getNOAAMarkers();
@@ -504,19 +506,25 @@
         bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
         bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
 
+        //console.log(SIRmarkerJSON);
         //hit Kinvey to find files loaded
-        app.loadGeoFiles(bbox_ll, bbox_ur, SIRmarkerJSON);
+        app.loadGeoFiles(bbox_ll, bbox_ur, SIRphotosJSON);
 
         //process through returned JSON to put up only the markers not already in our set
-        SIRmarkerJSON.features.forEach(function (markerItem) {
+        SIRphotosJSON.features.forEach(function (markerItem) {
+            //console.log(markerItem);
             if (SIR_photo_keys.includes(markerItem.properties.title)) {
                 true;
+                //console.log(markerItem);
+                //console.log(SIR_photo_keys);
             } else {
                 //console.log(markerItem);
                 SIRphotosJSON.features.push(markerItem);
-                SIR_photo_keys.push(markerItem.properties.title)
+                SIR_photo_keys.push(markerItem.properties.title);
+                //console.log(SIR_photo_keys);
             }
         });
+        //console.log(SIRphotosJSON);
         map.getSource('photos').setData(SIRphotosJSON);
     };
 

@@ -142,7 +142,7 @@
           app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON, file_keys);
           addKinveyMarkers(markerJSON);
       });
-      map.on('dragend', function () {
+      map.on('moveend', function () {
           mapBBox = map.getBounds();
           bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
           bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
@@ -182,8 +182,9 @@
           bbox_ll = [mapBBox.getSouthWest().lng, mapBBox.getSouthWest().lat];
           bbox_ur = [mapBBox.getNorthEast().lng, mapBBox.getNorthEast().lat];
           app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
-          //console.log(markerJSON)
+          //console.log(markerJSON);
           addKinveyMarkers(markerJSON);
+          //console.log(markerJSON);
       });
 
       function addKinveyMarkers(markerJSON) {
@@ -195,6 +196,7 @@
 
           //clean up markerJSON
           markerJSON.features.forEach(function (markerItem) {
+              console.log(file_keys);
               if (file_keys.includes(markerItem.properties.photo_id)) {
                   true;
                   //console.log('Found this one! ' + markerItem.properties.photo_id);

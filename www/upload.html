@@ -280,7 +280,7 @@
       });
       
 
-      map.on('drag', function() {
+      map.on('dragend', function() {
           document.getElementById('user-location-lat').innerHTML = map.getCenter().lat;
           document.getElementById('user-location-lng').innerHTML = map.getCenter().lng;
           center_coords = [map.getCenter().lng, map.getCenter().lat];
@@ -325,6 +325,7 @@
           bbox_ll = [map.getBounds()._sw.lng, map.getBounds()._sw.lat];
           bbox_ur = [map.getBounds()._ne.lng, map.getBounds()._ne.lat];
 
+          console.log(markerJSON)
           //hit Kinvey to find files loaded
           app.loadGeoFiles(bbox_ll, bbox_ur, markerJSON);
 
@@ -332,12 +333,14 @@
           markerJSON.features.forEach(function (markerItem) {
               if (marker_keys.includes(markerItem.properties.title)) {
                   true;
+                  markerJSON.features.pop();
               } else {
                   //console.log(markerItem);
                   photosJSON.features.push(markerItem);
                   marker_keys.push(markerItem.properties.title)
               }
           });
+          //console.log(photosJSON)
           map.getSource('photos').setData(photosJSON);
       });
 
