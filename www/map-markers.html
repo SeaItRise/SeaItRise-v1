@@ -195,6 +195,22 @@
         }]
     };
 
+    var flickr_geojson = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [0, 0]
+            },
+            "properties": {
+                "title": "flickr Layer Marker",
+                "icon": "marker",
+                "fill-color": "#3887be"
+            }
+        }]
+    };
+
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
@@ -266,6 +282,12 @@
 
         });
 
+        map.loadImage('img/sea-it-rise-flickr-icon.png', function (error, image) {
+            if (error) throw error;
+            map.addImage('flickr-icon', image);
+
+        }); 
+
         map.addSource('noaa-stations', {
             'type': 'geojson',
             data: noaa_geojson
@@ -278,6 +300,21 @@
                 "icon-image": "tide-station-icon",
                 "icon-size": 0.6,
                 
+            }
+        });
+
+        map.addSource('flickr-photos', {
+            'type': 'geojson',
+            data: flickr_geojson
+        });
+        map.addLayer({
+            "id": "flickr-photos",
+            "type": "symbol",
+            "source": "flickr-photos",
+            "layout": {
+                "icon-image": "flickr-icon",
+                "icon-size": 0.6,
+
             }
         });
 
@@ -381,7 +418,7 @@
 
     map.on('click', function (e) {
         var features = map.queryRenderedFeatures(e.point, {
-            layers: ['photos','noaa-stations'] // replace this with the name of the layer
+            layers: ['flickr-photos','noaa-stations'] // replace this with the name of the layer
         });
 
         if (!features.length) {
@@ -399,7 +436,14 @@
                        feature.properties.station_data_url + '</a></p>')
               .setLngLat(feature.geometry.coordinates)
               .addTo(map);
-            } else {
+        } else if (feature.layer.id == 'flickr-photos') {
+            var popup = new mapboxgl.Popup({ offset: [0, -15] })
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML('<p align="center"><a href="' + feature.properties.flickr_page_url + '" target="_blank">' + feature.properties.title + '</a></p>' +
+                         '<p align="center"><img src="' + feature.properties.flickr_largesq_url + '"/>' + '</p>' +
+                         '<p align="center">' + feature.properties.description + '</p>')
+                .addTo(map);
+        } else {
                 var popup = new mapboxgl.Popup({ offset: [0, -15] })
                     .setLngLat(feature.geometry.coordinates)
                     .setHTML('<p><img height=100 src="' + feature.properties.photo_page_url + '" alt="' + feature.properties.title + '"></p>')
@@ -474,24 +518,8 @@
                         //now we have 1 good geojson for all the pics, we add it to the map.
                    
                         map.getSource('noaa-stations').setData(noaa_geojson);
-                        //noaa_geojson.features.forEach(function (marker) {
+                      
 
-                        ////    // create a HTML element for each feature
-                        //    var el = document.createElement('div');
-                        //    el.className = 'marker';
-
-                        ////    // make a marker for each feature and add to the map
-                        ////    //console.log(marker)
-                        //    new mapboxgl.Marker(el)
-                        //    .setLngLat(marker.geometry.coordinates)
-                        //    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-                        //    .setHTML('<p align="center"><a href="' + marker.properties.station_data_url + '">' + marker.properties.title + '</a></p>' +
-                        //             '<p align="center"><a href="' + marker.properties.station_meta_url + '"/>' + marker.properties.id + '</a></p>'))
-                        //    .addTo(map);
-
-                            //console.log(noaa_geojson)
-                        //});
-                        //console.log(noaa_geojson);
                 });
             });
             //console.log(noaa_geojson)
@@ -528,29 +556,26 @@
         map.getSource('photos').setData(SIRphotosJSON);
     };
 
-
-
-
     function getFlickrMarkers() {
 
 
         // TODO: Refactor this function's logic to be similar to getSIRMarkers()
 
         // this wipes out the photo markers for the current zoom extent. Should probably limit number of markers to 50 or something.
-        var photo_geojson = {
-            type: 'FeatureCollection',
-            features: [{
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [0, 0]
-                },
-                properties: {
-                    title: 'Origin',
-                    description: '#seaitrise tag from Flickr'
-                }
-            }]
-        };
+        //var flickr_geojson = {
+        //    type: 'FeatureCollection',
+        //    features: [{
+        //        type: 'Feature',
+        //        geometry: {
+        //            type: 'Point',
+        //            coordinates: [0, 0]
+        //        },
+        //        properties: {
+        //            title: 'Origin',
+        //            description: '#seaitrise tag from Flickr'
+        //        }
+        //    }]
+        //};
         mapBBox = map.getBounds()._sw.lng + ',' + map.getBounds()._sw.lat + ',' + map.getBounds()._ne.lng + ',' + map.getBounds()._ne.lat;
 
         flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' +
@@ -585,7 +610,7 @@
                         //unique values 
                         flickr_photo_keys.push(metadata.photo.title._content);
 
-                        photo_geojson.features.push({
+                        flickr_geojson.features.push({
                             type: 'Feature',
                             geometry: {
                                 type: 'Point',
@@ -602,26 +627,9 @@
                     };
 
                     //now we have 1 good geojson for all the pics, we add it to the map.
-                   
+                    map.getSource('flickr-photos').setData(flickr_geojson);
 
-                    photo_geojson.features.forEach(function (marker) {
-
-                        // create a HTML element for each feature
-                        var el = document.createElement('div');
-                        el.className = 'marker';
-
-                        // make a marker for each feature and add to the map
-                        //console.log(marker)
-                        new mapboxgl.Marker(el)
-                        .setLngLat(marker.geometry.coordinates)
-                        .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-                        .setHTML('<p align="center"><a href="' + marker.properties.flickr_page_url + '" target="_blank">' + marker.properties.title + '</a></p>' +
-                                 '<p align="center"><img src="' + marker.properties.flickr_largesq_url + '"/>' + '</p>' +
-                                 '<p align="center">' + marker.properties.description + '</p>'))
-                        .addTo(map);
-                        //console.log(marker.properties.flickr_largesq_url)
-                    });
-                    //console.log(photo_geojson)
+                    //console.log(flickr_geojson)
 
                 });
             });
