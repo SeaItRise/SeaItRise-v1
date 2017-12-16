@@ -418,7 +418,7 @@
 
     map.on('click', function (e) {
         var features = map.queryRenderedFeatures(e.point, {
-            layers: ['flickr-photos','noaa-stations'] // replace this with the name of the layer
+            layers: ['photos','flickr-photos','noaa-stations'] // replace this with the name of the layer
         });
 
         if (!features.length) {
