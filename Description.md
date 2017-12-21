@@ -1,23 +1,15 @@
-= Title: 
+# Title: 
 * Sea It Rise: A Coastal Resiliency Planning App
 
-= Short Description:
+# Short Description:
 
 Sea It Rise enables you to plan for sea level rise impacts 
 using your smartphone as a data collection and visualization 
 device.
 
-= Image --> core image
+# Updates and Improvements
 
-= App Store Link
-https://play.google.com/store/apps/details?id=sea_it_rise.com.seaitrisev03
-
-= App Description
- <<Needs to be YouTube video>> 
-
-= Updates and Improvements
-
-== Background and Motivation
+## Background and Motivation
 The seas are rising and will rise faster later this century. The historical data 
 is clear and the scientific consensus is unequivocal. Even so, the rate of change 
 is small, and the desire to adapt to sea level increase is not overwhelming. This 
@@ -61,7 +53,7 @@ and see their work recognized can further motivate them to learn more about
 coastal resiliency and what changes and approaches might help mitigate future 
 impacts.
 
-=== Improvements
+### Improvements
 Sea It Rise has evolved considerably since the prototype submission in September 2017
 and the final public vote at the end of October. Our initial strategy of developing 
 and HTML5 app paid off by allowing fast interations and flexibility. 
@@ -77,7 +69,7 @@ small social marketing hashtag campaign from HeroX or other partners would great
 expand awareness and help the general public become more aware of the need to 
 plan for coastal resiliency.
 
-=== Future Plans
+### Future Plans
 The web application is now feature complete (although continually improving) and the 
 Android performance is significantly better, which motivates us to make native apps
 that have feature parity to the HTML5 environment.
@@ -94,9 +86,9 @@ maintenance revenue.
 Many thanks to the HeroX team for creating this challenge and to our users and fans
 for helping Sea It Rise get this far!
 
-== Sea It Rise HTML5 Web Application Features (https://www.sea-it-rise.com)
+## Sea It Rise HTML5 Web Application Features (https://www.sea-it-rise.com)
 
-=== Menu->Map->Map Interface
+### Menu->Map->Map Interface
  * Central interface for Sea It Rise
  * Provides for adding overlays for 3ft and 6ft inundation confidence levels 
    from NOAA Office for Coastal Management.
@@ -111,26 +103,26 @@ for helping Sea It Rise get this far!
  * Standard nav controls allow for zooming in/out and geolocation.
  * Search box allows for Point of Interest searching worldwide.
 
-=== Menu->Images->View Uploads
+### Menu->Images->View Uploads
  * Shows a table of all images uploaded by the user as well as all "public" images
    uploaded by other Sea It Rise users.
  * Shows markers on a minimap above the table for reference.
  * User must be logged in to see this page.
 
-=== Menu->Images->Upload and Image
+### Menu->Images->Upload and Image
  * Allows for uploading an image.
  * User can either click on the nav crosshair to geolocate (if in the field) 
    or use the blue crosshair to control the location for uploads from the desktop.
  * User has option for making image "public" or keeping it private.
 
-== Sea It Rise Android Features (https://play.google.com/store/apps/details?id=sea_it_rise.com.seaitrisev03)
-=== Provides basic map functionality and allow visualization of multiple NOAA inundation layers.
+## Sea It Rise Android Features (https://play.google.com/store/apps/details?id=sea_it_rise.com.seaitrisev03)
+### Provides basic map functionality and allow visualization of multiple NOAA inundation layers.
   * NOAA 3ft Confidence layer (confidence in prediction)
   * NOAA 3ft Depth layer (depth, from "shallow" to "deep")
   * NOAA 6ft Confidence layer (confidence in prediction)
   * NOAA 6ft Depth layer (depth, from "shallow" to "deep")
 
-=== Coming soon! (required for feature parity to HTML5 app)
+### Coming soon! (required for feature parity to HTML5 app)
   * Geolocation via button
   * Photo marker overlay show/hide button (possibly with different buttons for Flickr and/or Sea It Rise)
   * Search box for POI search
