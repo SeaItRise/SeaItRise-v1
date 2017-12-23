@@ -73,26 +73,6 @@ The web application is now feature complete (although continually improving) and
 Android performance is significantly better, which motivates us to make native apps
 that have feature parity to the HTML5 environment.
 
-If awarded a HeroX prize of any type, we hope to donate some of the proceeds as well
-as the application code to the University of Washington School of Oceanography's 
-Ocean Tech program (https://www.ocean.washington.edu/story/OTP_Home) so the project
-can continue to evolve with a focus on student coding experience. In any case, for 
-basic usage we currently expect to be able to maintain functionality for low 
-costs. Current discussions for using this application (or one similar to it) for 
-Washington Sea Grant's King Tides initiative might also allow for small amounts of
-maintenance revenue.
-
-Many thanks to the HeroX team for creating this challenge and to our users and fans
-for helping Sea It Rise get this far!
-
-
-
-
-
-
-
-
-
 
 *** iPhone and Android compatible. 
 *** Fast iteration and experimentation happens here.
