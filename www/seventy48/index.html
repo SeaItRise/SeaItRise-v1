@@ -162,7 +162,8 @@ var kayakTrack = {  "type": "FeatureCollection",
 
 
 
-var map = L.map('mapid').setView([48.58840868861914,-123.04481506347655], 9);
+var map = L.map('mapid').setView([-122.45223999023436,
+	47.646711194756], 8);
 var drawnItems = L.featureGroup().addTo(map);
 
 
@@ -177,10 +178,17 @@ var NOAANavChart = L.tileLayer('http://tileservice.charts.noaa.gov/tiles/50000_1
 
 //mapbox://styles/cpsarason/cjfvnf3vn06dp2rnk2kcq110a
 //https://api.mapbox.com/styles/v1/cpsarason/cji3d2cji0olj2so1gd6llcn0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ
-var MapBox = L.tileLayer('https://api.mapbox.com/styles/v1/cpsarason/cji3d2cji0olj2so1gd6llcn0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ',{
- attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
+var MapBoxOutside = L.tileLayer('https://api.mapbox.com/styles/v1/cpsarason/cji3d2cji0olj2so1gd6llcn0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ',{
+ attribution: 'Map data: &copy; <a href="http:/www.mapbox.com">Mapbox</a>'
 }).addTo(map);
 
+var MapBoxDark = L.tileLayer('https://api.mapbox.com/styles/v1/cpsarason/cji42q7r425ha2rqx65dnemun/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ',{
+ attribution: 'Map data: &copy; <a href="http:/www.mapbox.com">Mapbox</a>'
+}).addTo(map);
+
+var MapBoxSat = L.tileLayer('https://api.mapbox.com/styles/v1/cpsarason/cji3cm53i0bgn2rofv1ocslej/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ',{
+ attribution: 'Map data: &copy; <a href="http:/www.mapbox.com">Mapbox</a>'
+}).addTo(map);
 // var OpenSeaMap = L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
 // 	attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
 // }).addTo(map);
@@ -200,9 +208,10 @@ L.geoJSON(kayakTrack, {
 
 L.control.layers({
 	'NOAA Chart': NOAANavChart,
-	'MapBox Satellite': MapBox,
+	'MapBox Dark': MapBoxDark,
+	'MapBox Sat': MapBoxSat
 }, {
-	 'MapBox': MapBox,
+	 'MapBox Overlay': MapBoxOutside,
 
 }, {
 	 position: 'topleft',
