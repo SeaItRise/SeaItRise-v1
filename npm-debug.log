@@ -7,7 +7,7 @@
 6 silly lifecycle kinvey-html5-starter@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle kinvey-html5-starter@0.0.0~start: kinvey-html5-starter@0.0.0
 8 verbose lifecycle kinvey-html5-starter@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle kinvey-html5-starter@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/cpsarason/code/SeaItRise-v1/node_modules/.bin:/home/cpsarason/anaconda3/bin:/home/cpsarason/anaconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+9 verbose lifecycle kinvey-html5-starter@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/cpsarason/code/SeaItRise-v1/node_modules/.bin:/home/cpsarason/anaconda3/bin:/home/cpsarason/anaconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin
 10 verbose lifecycle kinvey-html5-starter@0.0.0~start: CWD: /home/cpsarason/code/SeaItRise-v1
 11 silly lifecycle kinvey-html5-starter@0.0.0~start: Args: [ '-c', 'node server' ]
 12 silly lifecycle kinvey-html5-starter@0.0.0~start: Returned: code: 1  signal: null
@@ -24,7 +24,7 @@
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:230:5)
 15 verbose pkgid kinvey-html5-starter@0.0.0
 16 verbose cwd /home/cpsarason/code/SeaItRise-v1
-17 error Linux 4.13.0-32-generic
+17 error Linux 4.13.0-41-generic
 18 error argv "/usr/bin/node" "/usr/bin/npm" "start"
 19 error node v6.11.4
 20 error npm  v3.5.2

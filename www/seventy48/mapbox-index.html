@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Sea It Rise, Coastal Resiliency Planner</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/todc-bootstrap.min.css">
+    <link rel="stylesheet" href="../css/app.css">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css' type='text/css' />
+
+
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:45px; bottom:0; width:100%; }
+        .marker {
+          background-image: url('../img/sea-it-rise-beth-icon.png');
+          background-size: cover;
+          width: 75px;
+          height: 75px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+        #layer-menu {
+        background: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 50px;
+        left: 10px;
+        border-radius: 3px;
+        width: 120px;
+        border: 1px solid rgba(0,0,0,0.4);
+        font-family: 'Open Sans', sans-serif;
+        }
+
+        #layer-menu a {
+            font-size: 13px;
+            color: #404040;
+            display: block;
+            margin: 0;
+            padding: 0;
+            padding: 10px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0,0,0,0.25);
+            text-align: left;
+        }
+
+        #layer-menu a:last-child {
+            border: none;
+        }
+
+        #layer-menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+
+        #layer-menu a.active {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        #layer-menu a.active:hover {
+            background: #3074a4;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="../js/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/rsvp.min.js"></script>
+<script src="../js/kinvey-html5-sdk.min.js"></script>
+<script src="../js/app.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css" type="text/css" />
+<style>
+#geocoder-container > div {
+    min-width:50%;
+    margin-left:25%;
+    position: sticky;
+    top: 65px;
+}
+</style>
+
+<script>
+
+    var mapbox_apikey = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+    var flickr_apikey = '920844c221cb26575c090ad0c48e554d';
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY3BzYXJhc29uIiwiYSI6IjM5ZGM2MTgxNGIxMTUyM2NhYzU3N2U0Y2VjODY2Zjc2In0.XjvKMZgY5p-AmHgX5fqgtQ';
+
+    var kayakTrack = {  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.43232727050781,
+            47.246726811046884
+          ],
+          [
+            -122.43370056152344,
+            47.25360169808079
+          ],
+          [
+            -122.43455886840819,
+            47.25663102603915
+          ],
+          [
+            -122.43885040283203,
+            47.26257266598805
+          ],
+          [
+            -122.44657516479494,
+            47.272124493121325
+          ],
+          [
+            -122.47713088989258,
+            47.28679833178004
+          ],
+          [
+            -122.50820159912108,
+            47.309965390979684
+          ],
+          [
+            -122.54116058349608,
+            47.32509416935555
+          ],
+          [
+            -122.55695343017577,
+            47.326955873477544
+          ],
+          [
+            -122.53772735595703,
+            47.36278088960837
+          ],
+          [
+            -122.52708435058594,
+            47.44480754169437
+          ],
+          [
+            -122.49069213867188,
+            47.51673695680999
+          ],
+          [
+            -122.47833251953125,
+            47.53806480221706
+          ],
+          [
+            -122.4810791015625,
+            47.55521351530769
+          ],
+          [
+            -122.4755859375,
+            47.58764167941513
+          ],
+          [
+            -122.48657226562499,
+            47.63948497925488
+          ],
+          [
+            -122.50167846679686,
+            47.70190636450079
+          ],
+          [
+            -122.46528625488281,
+            47.75455961892611
+          ],
+          [
+            -122.47833251953125,
+            47.81684332352077
+          ],
+          [
+            -122.52433776855469,
+            47.91450120703987
+          ],
+          [
+            -122.71865844726561,
+            48.017946316196635
+          ],
+          [
+            -122.72475242614748,
+            48.024720482272315
+          ],
+          [
+            -122.73196220397948,
+            48.03201032743533
+          ],
+          [
+            -122.74972915649413,
+            48.046644304499615
+          ],
+          [
+            -122.7509307861328,
+            48.047562376233046
+          ],
+          [
+            -122.75711059570312,
+            48.0762438718672
+          ],
+          [
+            -122.75024414062499,
+            48.11384975871469
+          ]
+        ]
+      }
+    }
+  ]
+}
+
+
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v9',
+        zoom: 9.5,
+        bearing: 270,
+        pitch: 45,
+        center: [-122.45223999023436,
+          47.646711194756]
+    });
+
+    map.on('load', function () {
+        //map.addSource('noaa-0ft', {
+        //    'type': 'raster',
+        //    'tiles': [
+        //        'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_0ft/MapServer/tile/{z}/{y}/{x}'
+        //    ],
+        //    'tileSize': 256
+        //});
+        //map.addLayer({
+        //    'id': 'noaa-0ft',
+        //    'type': 'raster',
+        //    'source': 'noaa-0ft'
+        //});
+
+        map.addSource('noaa-3ft', {
+            'type': 'raster',
+            'tiles': [
+                'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}'
+            ],
+            'tileSize': 256
+        });
+        map.addLayer({
+            'id': 'noaa-3ft',
+            'type': 'raster',
+            'source': 'noaa-3ft',
+            'layout': {
+                'visibility': 'none'
+            }
+
+        });
+
+        map.addSource('noaa-6ft', {
+            'type': 'raster',
+            'tiles': [
+                'https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_6ft/MapServer/tile/{z}/{y}/{x}'
+            ],
+            'tileSize': 256
+        });
+        map.addLayer({
+            'id': 'noaa-6ft',
+            'type': 'raster',
+            'source': 'noaa-6ft',
+            'layout': {
+                'visibility': 'none'
+            }
+        });
+
+
+//https://geodata.state.nj.us/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&width=256&height=256&layers=Natural2015
+        map.addSource('noaa-nav', {
+            'type': 'raster',
+            'tiles': [
+                'https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/MapServer/tile/{z}/{y}/{x}'
+            ],
+            'tileSize': 256
+        });
+        map.addLayer({
+            'id': 'noaa-nav',
+            'type': 'raster',
+            'source': 'noaa-nav',
+        });
+
+
+        // add the line which will be modified in the animation
+        map.addLayer({
+            'id': 'line-animation',
+            'type': 'line',
+            'source': {
+                'type': 'geojson',
+                'data': kayakTrack
+            },
+            'layout': {
+                'line-cap': 'round',
+                'line-join': 'round'
+            },
+            'paint': {
+                'line-color': '#fd7603',
+                'line-width': 5,
+                'line-opacity': .8
+            }
+        });
+        getFlickrMarkers();
+
+    });
+
+
+    // add search box to map
+    map.addControl(new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken
+    }));
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+    // Add geolocate control to the map.
+    map.addControl(new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        },
+        trackUserLocation: true
+       })
+
+    );
+
+
+
+    var photo_keys = [];
+
+    // Flickr markers will get added
+    map.on('zoomend', function () {
+        getFlickrMarkers();
+    });
+    map.on('dragend', function () {
+        getFlickrMarkers();
+    });
+
+    function getFlickrMarkers() {
+
+        // this wipes out the photo markers for the current zoom extent. Should probably limit number of markers to 50 or something.
+        var photo_geojson = {
+            type: 'FeatureCollection',
+            features: [{
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [0, 0]
+                },
+                properties: {
+                    title: 'Origin',
+                    description: '#seaitrise tag from Flickr'
+                }
+            }]
+        };
+        mapBBox = map.getBounds()._sw.lng + ',' + map.getBounds()._sw.lat + ',' + map.getBounds()._ne.lng + ',' + map.getBounds()._ne.lat;
+
+        flickr_apiurl = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' +
+            flickr_apikey +
+            '&tags=seaitrise,hightide,lowtide' +
+            '&bbox=' + mapBBox + '&accuracy=16'  +
+            '&per_page=10&format=json&nojsoncallback=1';
+        console.log(flickr_apiurl)
+        $.getJSON(flickr_apiurl, function (json) {
+            $.each(json.photos.photo, function (i, myresult) {
+                apiurl_size = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=920844c221cb26575c090ad0c48e554d&photo_id=" + myresult.id + "&format=json&nojsoncallback=1";
+                photoinfo_url = 'https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + flickr_apikey + '&photo_id=' + myresult.id + '&format=json&nojsoncallback=1';
+                //console.log(i)
+                $.getJSON(photoinfo_url, function (metadata) {
+                    //var test_data = $.getJSON(photoinfo_url);
+
+                    if (photo_keys.includes(metadata.photo.title._content)) {
+                        true;// console.log('Found this one! ' + metadata.photo.title._content)
+                    } else {
+
+                        //console.log(metadata.photo.title._content)
+
+                        //decided to construct URL instead of looping through apiurl_size options
+                        //model based on this URL here: "https://farm9.staticflickr.com/8736/16298993124_d38eca3085_q.jpg"
+                        ///var flickr_sizes = $.getJSON(apiurl_size);
+
+                        var photo_img_url = 'https://farm' + metadata.photo.farm + '.staticflickr.com/' + metadata.photo.server + '/' +
+                            metadata.photo.id + '_' + metadata.photo.secret + '_q.jpg';
+                        //console.log(photo_img_url)
+                        //TODO: refactor this section!
+                        //this is a terrible nested loop that is recursively loading, but at least I'm only creating markers for the
+                        //unique values
+                        photo_keys.push(metadata.photo.title._content);
+
+                        photo_geojson.features.push({
+                            type: 'Feature',
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [metadata.photo.location.longitude, metadata.photo.location.latitude]
+                            },
+                            properties: {
+                                title: metadata.photo.title._content,
+                                description: '#hightide, #lowtide and #surf tags from Flickr',
+                                flickr_page_url: metadata.photo.urls.url[0]._content,
+                                flickr_largesq_url: photo_img_url
+                            }
+
+                        });
+                    }
+
+                    //now we have 1 good geojson for all the pics, we add it to the map.
+
+
+                    photo_geojson.features.forEach(function (marker) {
+
+                        // create a HTML element for each feature
+                        var el = document.createElement('div');
+                        el.className = 'marker';
+
+                        // make a marker for each feature and add to the map
+                        //console.log(marker)
+                        new mapboxgl.Marker(el)
+                        .setLngLat(marker.geometry.coordinates)
+                        .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                        .setHTML('<p align="center"><a href="' + marker.properties.flickr_page_url + '">' + marker.properties.title + '</a></p>' +
+                                 '<p align="center"><img src="' + marker.properties.flickr_largesq_url + '"/>' + '</p>' +
+                                 '<p align="center">' + marker.properties.description + '</p>'))
+                        .addTo(map);
+                        //console.log(marker.properties.flickr_largesq_url)
+                    });
+                    //console.log(metadata)
+
+                });
+            });
+        });
+    };
+
+</script>
+
+</body>
+</html>
