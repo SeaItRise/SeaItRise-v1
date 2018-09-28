@@ -1,0 +1,7 @@
+{
+    "name": "Sea It Rise -- Development",
+    "mail": {
+        "host": "dev-mail-server",
+        "password": "app_password"
+    }
+}

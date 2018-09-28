@@ -2,6 +2,7 @@
   "name": "SeaItRise",
   "version": "1.0.0",
   "description": "Sea It Rise sea level viewer, based on HTML5 starter app for the Kinvey platform.",
+  "main": "server.js",
   "scripts": {
     "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +16,7 @@
     "debug": "^4.0.1",
     "express": "^4.16.3",
     "helmet": "^3.13.0",
-    "joi": "^13.1.0",
+    "joi": "^13.6.0",
     "mongodb": "^3.1.6",
     "mongoose": "^5.2.17",
     "morgan": "^1.9.1"
