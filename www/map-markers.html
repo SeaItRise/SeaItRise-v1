@@ -213,7 +213,7 @@
 
     var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/light-v9',
+        style: 'mapbox://styles/mapbox/dark-v9',
         zoom: 13,
         center: [-122.3383, 47.6027]
     });
@@ -346,9 +346,9 @@
         });
         map.style.sourceCaches['attribution-layer']._source.attribution = "&copy; NOAA <a href='https://tidesandcurrents.noaa.gov/' target='_blank'>CO-OPS</a> and <a href='https://coast.noaa.gov/digitalcoast/tools/slr' target='_blank'>Office for Coastal Management</a>";
 
-        getFlickrMarkers();
-        getSIRMarkers();
-        getNOAAMarkers();
+        //getFlickrMarkers();
+        //getSIRMarkers();
+        //getNOAAMarkers();
     });
 
     var toggleableLayerIds = [ 'noaa-3ft', 'noaa-6ft' ];
@@ -405,15 +405,15 @@
     // Flickr markers will get added
     map.on('zoomend', function () {
         
-        getFlickrMarkers();
-        getSIRMarkers();
-        getNOAAMarkers();
+        //getFlickrMarkers();
+        //getSIRMarkers();
+        //getNOAAMarkers();
 
     });
     map.on('moveend', function () {
-        getFlickrMarkers();
-        getSIRMarkers();
-        getNOAAMarkers();
+        //getFlickrMarkers();
+        //getSIRMarkers();
+        //getNOAAMarkers();
     });
 
     map.on('click', function (e) {
